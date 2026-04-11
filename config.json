@@ -1,0 +1,30 @@
+{
+  "mode": "development",
+  "kiosk": {
+    "fullscreen": false,
+    "inactivityTimeout": 300000,
+    "windowWidth": 1080,
+    "windowHeight": 1920,
+    "minWindowWidth": 518,
+    "minWindowHeight": 900
+  },
+  "hardware": {
+    "paymentTerminal": {
+      "enabled": true,
+      "port": "COM3",
+      "baudRate": 9600,
+      "useMock": true
+    },
+    "printer": {
+      "enabled": true,
+      "vendorId": "0x1234",
+      "productId": "0x5678",
+      "useMock": true
+    }
+  },
+  "api": {
+    "baseUrl": "https://io.bellissimo.uz/api",
+    "timeout": 5000,
+    "retryAttempts": 3
+  }
+}

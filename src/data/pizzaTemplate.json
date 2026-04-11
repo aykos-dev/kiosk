@@ -1,0 +1,27 @@
+{
+  "defaultSizeId": "30",
+  "defaultCrustId": "thick",
+  "maxToppings": 16,
+  "sizes": [
+    { "id": "20", "label": "20 sm", "priceDelta": -25000 },
+    { "id": "25", "label": "25 sm", "priceDelta": -12000 },
+    { "id": "30", "label": "30 sm", "priceDelta": 0 },
+    { "id": "35", "label": "35 sm", "priceDelta": 18000 }
+  ],
+  "crusts": [
+    { "id": "thin", "name": "Yupqa bort", "image": "/combo/p1.jpg", "priceDelta": 0 },
+    { "id": "thick", "name": "Qalin bort", "image": "/combo/p2.jpg", "priceDelta": 0 },
+    { "id": "cheese", "name": "Sirli bort", "image": "/combo/p3.jpg", "priceDelta": 20000 },
+    { "id": "hotdog", "name": "Hot-Dog bort", "image": "/combo/p4.jpg", "priceDelta": 20000 }
+  ],
+  "toppings": [
+    { "id": "kebab", "name": "Kebab", "image": "/combo/p5.jpg", "priceDelta": 20000 },
+    { "id": "tomato", "name": "Pomidor", "image": "/combo/p6.jpg", "priceDelta": 20000 },
+    { "id": "cheese", "name": "Pishloq", "image": "/combo/p3.jpg", "priceDelta": 20000 },
+    { "id": "pepper", "name": "Bulg'or", "image": "/combo/p4.jpg", "priceDelta": 20000 },
+    { "id": "mushroom", "name": "Qo'ziqorin", "image": "/combo/p5.jpg", "priceDelta": 20000 },
+    { "id": "potato", "name": "Kartoshka", "image": "/combo/p6.jpg", "priceDelta": 20000 },
+    { "id": "sausage", "name": "Kolbasa", "image": "/combo/p7.jpg", "priceDelta": 20000 },
+    { "id": "chili", "name": "Achchiq qalampir", "image": "/combo/p8.jpg", "priceDelta": 20000 }
+  ]
+}

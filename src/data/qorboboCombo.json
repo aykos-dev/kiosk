@@ -1,0 +1,79 @@
+{
+  "heroImage": "/combo/hero.jpg",
+  "description": "O'zingiz tanlaydigan 4 ta pitsa (30 cm) va 2 ta Coca-Cola (1.5 L). 8-12 kishini to'ydiradi",
+  "slots": [
+    {
+      "id": "slot-1",
+      "pizzaSlot": true,
+      "defaultOptionId": "alfredo",
+      "options": [
+        { "id": "alfredo", "name": "Alfredo o'rtacha", "image": "/combo/p1.jpg", "priceDelta": 0, "inComboLabel": "Kombo ichida" },
+        { "id": "cheese", "name": "Pishloqli pitsa o'rtacha", "image": "/combo/p2.jpg", "priceDelta": 0 },
+        { "id": "pepperoni", "name": "Pepperoni ortacha", "image": "/combo/p4.jpg", "priceDelta": 0, "badge": "HIT!" },
+        { "id": "chicken-cheese", "name": "Pishloqli joja o'rtacha", "image": "/combo/p3.jpg", "priceDelta": 0 },
+        { "id": "hawaii", "name": "Gavaycha o'rtacha", "image": "/combo/p5.jpg", "priceDelta": 10000 },
+        { "id": "halapeno", "name": "Halapenyo o'rtacha", "image": "/combo/p6.jpg", "priceDelta": 13000 },
+        { "id": "kebab", "name": "Kebab pitsa o'rtacha", "image": "/combo/p7.jpg", "priceDelta": 13000 },
+        { "id": "donar", "name": "Donar pizza o'rtacha", "image": "/combo/p8.jpg", "priceDelta": 17000 },
+        { "id": "mex", "name": "Meksikancha o'rtacha", "image": "/combo/p1.jpg", "priceDelta": 17000 },
+        { "id": "burger", "name": "Dabl chizburger o'rtacha", "image": "/combo/p2.jpg", "priceDelta": 17000 }
+      ]
+    },
+    {
+      "id": "slot-2",
+      "pizzaSlot": true,
+      "defaultOptionId": "cheese",
+      "options": [
+        { "id": "alfredo", "name": "Alfredo o'rtacha", "image": "/combo/p1.jpg", "priceDelta": 0 },
+        { "id": "cheese", "name": "Pishloqli pitsa o'rtacha", "image": "/combo/p2.jpg", "priceDelta": 0 },
+        { "id": "pepperoni", "name": "Pepperoni ortacha", "image": "/combo/p4.jpg", "priceDelta": 0, "badge": "HIT!" },
+        { "id": "chicken-cheese", "name": "Pishloqli joja o'rtacha", "image": "/combo/p3.jpg", "priceDelta": 0 },
+        { "id": "hawaii", "name": "Gavaycha o'rtacha", "image": "/combo/p5.jpg", "priceDelta": 10000 },
+        { "id": "donar", "name": "Donar pizza o'rtacha", "image": "/combo/p8.jpg", "priceDelta": 17000 }
+      ]
+    },
+    {
+      "id": "slot-3",
+      "pizzaSlot": true,
+      "defaultOptionId": "chicken-cheese",
+      "options": [
+        { "id": "alfredo", "name": "Alfredo o'rtacha", "image": "/combo/p1.jpg", "priceDelta": 0 },
+        { "id": "cheese", "name": "Pishloqli pitsa o'rtacha", "image": "/combo/p2.jpg", "priceDelta": 0 },
+        { "id": "pepperoni", "name": "Pepperoni ortacha", "image": "/combo/p4.jpg", "priceDelta": 0 },
+        { "id": "chicken-cheese", "name": "Pishloqli joja o'rtacha", "image": "/combo/p3.jpg", "priceDelta": 0 },
+        { "id": "tovuq", "name": "Tovuq va qo'ziqorinli o'rtacha", "image": "/combo/p5.jpg", "priceDelta": 10000 },
+        { "id": "donar", "name": "Donar pizza o'rtacha", "image": "/combo/p8.jpg", "priceDelta": 17000 }
+      ]
+    },
+    {
+      "id": "slot-4",
+      "pizzaSlot": true,
+      "defaultOptionId": "pepperoni",
+      "options": [
+        { "id": "alfredo", "name": "Alfredo o'rtacha", "image": "/combo/p1.jpg", "priceDelta": 0 },
+        { "id": "cheese", "name": "Pishloqli pitsa o'rtacha", "image": "/combo/p2.jpg", "priceDelta": 0 },
+        { "id": "pepperoni", "name": "Pepperoni ortacha", "image": "/combo/p4.jpg", "priceDelta": 0, "badge": "HIT!" },
+        { "id": "chicken-cheese", "name": "Pishloqli joja o'rtacha", "image": "/combo/p3.jpg", "priceDelta": 0 },
+        { "id": "donar", "name": "Donar pizza o'rtacha", "image": "/combo/p8.jpg", "priceDelta": 17000 }
+      ]
+    },
+    {
+      "id": "slot-5",
+      "defaultOptionId": "cola-15",
+      "options": [
+        { "id": "cola-15", "name": "Coca-Cola 1.5 L", "image": "/combo/cola.jpg", "priceDelta": 0 },
+        { "id": "cola-zero", "name": "Coca-Cola Zero 1.5 L", "image": "/combo/cola.jpg", "priceDelta": 0 },
+        { "id": "fanta", "name": "Fanta 1.5 L", "image": "/combo/cola.jpg", "priceDelta": 0 }
+      ]
+    },
+    {
+      "id": "slot-6",
+      "defaultOptionId": "cola-15",
+      "options": [
+        { "id": "cola-15", "name": "Coca-Cola 1.5 L", "image": "/combo/cola.jpg", "priceDelta": 0 },
+        { "id": "cola-zero", "name": "Coca-Cola Zero 1.5 L", "image": "/combo/cola.jpg", "priceDelta": 0 },
+        { "id": "sprite", "name": "Sprite 1.5 L", "image": "/combo/cola.jpg", "priceDelta": 0 }
+      ]
+    }
+  ]
+}

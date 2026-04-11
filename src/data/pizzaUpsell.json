@@ -1,0 +1,14 @@
+{
+  "sauces": [
+    { "id": "maxsus", "name": "Maxsus sous", "price": 5000, "image": "/combo/p1.jpg" },
+    { "id": "chili", "name": "Chili sous", "price": 5000, "image": "/combo/p2.jpg" },
+    { "id": "cheese-sauce", "name": "Pishloqli sous", "price": 5000, "image": "/combo/p3.jpg" },
+    { "id": "ketchup", "name": "Ketchup sous", "price": 5000, "image": "/combo/p4.jpg" }
+  ],
+  "drinks": [
+    { "id": "cola-fountain", "name": "Quyiladigan Coca-Cola", "price": 11000, "image": "/combo/cola.jpg" },
+    { "id": "sprite-fountain", "name": "Quyiladigan Sprite", "price": 11000, "image": "/combo/cola.jpg" },
+    { "id": "fanta-fountain", "name": "Quyiladigan Fanta", "price": 11000, "image": "/combo/cola.jpg" },
+    { "id": "cola-05", "name": "Coca-Cola 0.5", "price": 12000, "image": "/combo/cola.jpg" }
+  ]
+}

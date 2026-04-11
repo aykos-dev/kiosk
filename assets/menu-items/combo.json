@@ -1,0 +1,200 @@
+[
+  {
+    "sourceActionId": "03650000-6bec-ac1f-05ef-08db9f189c3d",
+    "name": "Донарная двойка",
+    "priceModification": 115000,
+    "originalPrice": 138000,
+    "discountPercent": 17,
+    "translations": {
+      "title": {
+        "ru": "Донарная двойка",
+        "uz": "Donarli juftlik"
+      },
+      "desc": {
+        "ru": "Любые две донар пиццы (25 см) на выбор: донар, куриный донар или чеддер донар",
+        "uz": "Ixtiyoringizdagi ikkita donar pitsa (25 cm): donar, tovuqli donar yoki cheddar donar"
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/03650000-6bec-ac1f-05ef-08db9f189c3d.jpg"
+  },
+  {
+    "sourceActionId": "03bf0000-6bec-ac1f-8510-08dc86e2eee7",
+    "name": "3 от 109 000 сум",
+    "priceModification": 109000,
+    "originalPrice": 173000,
+    "discountPercent": 37,
+    "translations": {
+      "title": {
+        "ru": "Три пиццы от 109 000 сум",
+        "uz": "Uchta pitsa 109 000 soʻmdan boshlab"
+      },
+      "desc": {
+        "ru": "Три пиццы (25 см) на выбор по выгодной цене от 109 000 сум! Для  3-6 человек.",
+        "uz": "Istalgan uchta pitsa (25 cm) 109 000 so‘mdan boshlab foydali narxda. 3-6 kishi uchun."
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/03bf0000-6bec-ac1f-8510-08dc86e2eee7.jpg"
+  },
+  {
+    "sourceActionId": "03bf0000-6bec-ac1f-8938-08dd9ece412c",
+    "name": "Kombo 2+1: O‘zingiz tanlang",
+    "priceModification": 0,
+    "originalPrice": 0,
+    "discountPercent": null,
+    "translations": {
+      "title": {
+        "ru": "Комбо 2+1",
+        "uz": "Kombo 2+1"
+      },
+      "desc": {
+        "ru": "Соберите свою троицу — и платите только за две! Создайте своё идеальное комбо: выберите любые три пиццы (25 см) и заплатите только за две.   Стоимость комбо от 119 000 сум",
+        "uz": "O‘z uchligingizni to‘plang va faqat ikkitasi uchun to‘lang! O‘z mukammal kombongizni yarating: istalgan uchta pitsani (25 cm) tanlang va faqat ikkitasi uchun to‘lang.   Kombo narxi 119 000 so‘mdan boshlanadi"
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/03bf0000-6bec-ac1f-8938-08dd9ece412c.jpg"
+  },
+  {
+    "sourceActionId": "03bf0000-6bec-ac1f-b56e-08de203d41e8",
+    "name": "3 от 80000",
+    "priceModification": 80000,
+    "originalPrice": 107000,
+    "discountPercent": 25,
+    "translations": {
+      "title": {
+        "ru": "Три пиццы от 80 000 сум",
+        "uz": "Uchta pitsa 80 000 soʻmdan boshlab"
+      },
+      "desc": {
+        "ru": "Выбирайте любые три пиццы (20 см) по выгодной цене от 80 000 сум.",
+        "uz": "Istalgan uchta pitsa (20 cm) 80 000 so‘mdan boshlab unumli narxda."
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/03bf0000-6bec-ac1f-b56e-08de203d41e8.jpg"
+  },
+  {
+    "sourceActionId": "03bf0000-6bec-ac1f-e41a-08ddf5d89068",
+    "name": "PUBG combo",
+    "priceModification": 65000,
+    "originalPrice": 89000,
+    "discountPercent": 27,
+    "translations": {
+      "title": {
+        "ru": "PUBG mobile комбо",
+        "uz": "PUBG mobile combo"
+      },
+      "desc": {
+        "ru": "Пицца пепперони (20 см), хрустящая картошка фри и 3 аппетитных стрипса. Идеально для 1-2 человека!",
+        "uz": "Pepperoni pitsasi (20 cm), chitir-chitir kartoshka fri va 3 ta ishtahaochar stripslar. 1-2 kishi uchun ayni muddao!"
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/03bf0000-6bec-ac1f-e41a-08ddf5d89068.jpg"
+  },
+  {
+    "sourceActionId": "f8990000-6beb-ac1f-17e2-08dc5469e755",
+    "name": "Do'stlar 1",
+    "priceModification": 84000,
+    "originalPrice": 109000,
+    "discountPercent": 23,
+    "translations": {
+      "title": {
+        "ru": "Комбо на двоих",
+        "uz": "Ikki kishilik kombo"
+      },
+      "desc": {
+        "ru": "2 беллисстера, 5 куриных стрипсов, два разливных напитка и соус барбекю.",
+        "uz": "2 ta bellisster, 5 ta tovuqli stripslar, 2 ta quyma ichimlik va barbekyu sous."
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/f8990000-6beb-ac1f-17e2-08dc5469e755.jpg"
+  },
+  {
+    "sourceActionId": "f8990000-6beb-ac1f-1b4b-08dc575d771a",
+    "name": "Barakali 1",
+    "priceModification": 144000,
+    "originalPrice": 179000,
+    "discountPercent": 20,
+    "translations": {
+      "title": {
+        "ru": "Барака комбо",
+        "uz": "Barakali kombo"
+      },
+      "desc": {
+        "ru": "2 пиццы (30 см), 8 классических синнамончиков, Coca-Cola (1 л) и 2 фирменных соуса.",
+        "uz": "2 ta pitsa (30 cm), 8 ta klassik sinnamonchalar, Coca-Cola (1 L) va 2 ta maxsus sous"
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/f8990000-6beb-ac1f-1b4b-08dc575d771a.jpg"
+  },
+  {
+    "sourceActionId": "f8990000-6beb-ac1f-1e2d-08dda8a6abc4",
+    "name": "Bellisster kombosi",
+    "priceModification": 42000,
+    "originalPrice": 61000,
+    "discountPercent": 31,
+    "translations": {
+      "title": {
+        "ru": "Комбо на одного",
+        "uz": "Bir kishilik kombo"
+      },
+      "desc": {
+        "ru": "На ваш выбор: беллисстер или чиабатта, куриные стрипсы (3 шт) или картошка фри, а также напиток (газировка на разлив, кофе или чай) и соус на выбор.",
+        "uz": "O‘zingiz tanlaysiz: bellisster yoki chiabatta, snekka tovuqli stripslar (3 ta) yoki kartoshka fri, qo‘shimchasiga ichimlik (quyma gazli ichimlik, qahva yoki choy), tanlash uchun sous."
+      }
+    },
+    "image": null
+  },
+  {
+    "sourceActionId": "f8990000-6beb-ac1f-3146-08dd1dbaa0d0",
+    "name": "Tovuqcha kombo",
+    "priceModification": 45000,
+    "originalPrice": 66000,
+    "discountPercent": 32,
+    "translations": {
+      "title": {
+        "ru": "Товукча комбо",
+        "uz": "Tovuqcha kombo"
+      },
+      "desc": {
+        "ru": "Пир из хрустящей, нежной курочки: 3 куриных стрипса, попперсы и 3 куриных крылышка",
+        "uz": "Chitir-chitir tovuqcha: 3 ta tovuqli strips, popperslar va 3 ta tovuq qanotchalaridan iborat bazm"
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/f8990000-6beb-ac1f-3146-08dd1dbaa0d0.jpg"
+  },
+  {
+    "sourceActionId": "f8990000-6beb-ac1f-4056-08dc575e681f",
+    "name": "Ассалом Навруз комбо",
+    "priceModification": 255000,
+    "originalPrice": 344000,
+    "discountPercent": 26,
+    "translations": {
+      "title": {
+        "ru": "4 пиццы и Кока кола",
+        "uz": "4 ta pitsa va Coca-Cola"
+      },
+      "desc": {
+        "ru": "4 пиццы (30 см) на ваш выбор и 2 Coca-Cola (1,5 л). Накормит от 8 до 12 человек",
+        "uz": "O‘zingiz tanlaydigan 4 ta pitsa (30 cm) va 2 ta Coca-Cola (1.5 L). 8-12 kishini to‘ydiradi"
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/f8990000-6beb-ac1f-4056-08dc575e681f.jpg"
+  },
+  {
+    "sourceActionId": "f8990000-6beb-ac1f-ad8c-08dc575cbda9",
+    "name": "Dostlar 2",
+    "priceModification": 89000,
+    "originalPrice": 105000,
+    "discountPercent": 15,
+    "translations": {
+      "title": {
+        "ru": "Друзья",
+        "uz": "Doʻstlar"
+      },
+      "desc": {
+        "ru": "Пицца (25 см), 8 синнамончиков, 5 куриных стрипсов и 2 Coca-Cola (разлив). Идеально на двоих!",
+        "uz": "Pitsa (25 cm), 8 ta sinnamonchalar, 5 ta tovuqli strips va 2 ta Coca-Cola (quyma). Ikki kishiga ayni muddao!"
+      }
+    },
+    "image": "https://devio.bellissimo.uz/images/f8990000-6beb-ac1f-ad8c-08dc575cbda9.jpg"
+  }
+]

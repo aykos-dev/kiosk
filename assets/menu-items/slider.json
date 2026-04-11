@@ -1,0 +1,19 @@
+{
+  "data": [
+      {
+          "id": 2,
+          "picture_url": "https://bellissimo.fra1.digitaloceanspaces.com/content-io/ab3c4e04-321e-4c37-b087-fb40ddd30ce1.jpg",
+          "alternative_text": "3",
+          "web_link": null,
+          "app_link": null
+      },
+      {
+          "id": 3,
+          "picture_url": "https://bellissimo.fra1.digitaloceanspaces.com/content-io/f4eaa1c4-67d7-4767-8dc6-79384392c2ff.jpg",
+          "alternative_text": "2",
+          "web_link": null,
+          "app_link": null
+      }
+  ],
+  "success": true
+}

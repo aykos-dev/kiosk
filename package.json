@@ -1,0 +1,59 @@
+{
+  "name": "bellissimo-kiosk",
+  "productName": "bellissimo-kiosk",
+  "version": "1.0.0",
+  "description": "Offline-first food service kiosk (Electron + React)",
+  "main": ".vite/build/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron-forge start",
+    "dev": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "build:mac": "electron-forge make --platform=darwin",
+    "build:win": "electron-forge make --platform=win32",
+    "publish": "electron-forge publish",
+    "postinstall": "electron-rebuild -f -w better-sqlite3",
+    "test": "node -e \"console.log('Add vitest/jest for unit tests')\"",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "sardormahmudovbellissimo",
+    "email": "sardor.mahmudov@bellissimo.uz"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
+    "@electron-forge/plugin-fuses": "^7.11.1",
+    "@electron-forge/plugin-vite": "^7.11.1",
+    "@electron/fuses": "^1.8.0",
+    "@electron/rebuild": "^4.0.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.27",
+    "electron": "41.1.1",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^3.4.17",
+    "vite": "^5.4.21"
+  },
+  "dependencies": {
+    "@tanstack/query-async-storage-persister": "^5.97.0",
+    "@tanstack/react-query": "^5.96.2",
+    "@tanstack/react-query-persist-client": "^5.97.0",
+    "axios": "^1.14.0",
+    "better-sqlite3": "^12.8.0",
+    "electron-squirrel-startup": "^1.0.1",
+    "idb-keyval": "^6.2.2",
+    "lucide-react": "^1.8.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "uuid": "^13.0.0",
+    "zustand": "^5.0.12"
+  }
+}

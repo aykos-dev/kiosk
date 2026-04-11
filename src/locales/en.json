@@ -1,0 +1,211 @@
+{
+  "common": {
+    "back": "Back",
+    "backMenu": "Go back",
+    "close": "Close",
+    "add": "Add",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "continue": "Continue",
+    "hit": "HIT!",
+    "new": "NEW!",
+    "admin": "Admin",
+    "currencyZero": "+0 UZS",
+    "currencyPlus": "+{amount} UZS",
+    "orderWord": "Place order",
+    "brandOrderHere": "ORDER HERE",
+    "startOrder": "Start order"
+  },
+  "status": {
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "idleModal": {
+    "title": "Dear guest!",
+    "body": "Your order will be reset and you will return to the first screen",
+    "continue": "Continue"
+  },
+  "backCartModal": {
+    "title": "Go back?",
+    "body": "If you go back, this order will be cleared and you will need to start over",
+    "cancel": "Cancel",
+    "confirm": "Yes, go back"
+  },
+  "welcome": {
+    "tagline": "ORDER HERE",
+    "cta": "Start order"
+  },
+  "settings": {
+    "title": "Kiosk settings",
+    "hint": "Payment methods and organizations are loaded for the selected city and venue.",
+    "cityId": "City ID (CITY_ID)",
+    "organizationId": "Organization ID (ORGANIZATION_ID)",
+    "save": "Save",
+    "cancel": "Cancel",
+    "resetDefaults": "Reset to defaults",
+    "passwordTitle": "Enter password",
+    "passwordHint": "A password is required to open settings.",
+    "passwordPlaceholder": "Password",
+    "passwordSubmit": "Continue",
+    "passwordCancel": "Cancel",
+    "passwordWrong": "Incorrect password. Try again."
+  },
+  "language": {
+    "back": "← Back",
+    "mazali": "Tasty!",
+    "title": "Welcome to Bellissimo Pizza",
+    "subtitle": "Order without waiting in line",
+    "dineIn": "Dine in",
+    "takeaway": "Takeaway",
+    "chooseLanguage": "Choose language",
+    "continue": "Continue"
+  },
+  "cartBar": {
+    "empty": "Add items",
+    "goToCart": "Go to cart"
+  },
+  "comboCatalog": {
+    "title": "Combos"
+  },
+  "cart": {
+    "title": "Cart",
+    "backAria": "Back",
+    "recommendations": "You may also like",
+    "confirm": "Confirm order {total}"
+  },
+  "payment": {
+    "title": "Payment method",
+    "howPay": "How would you like to pay?",
+    "qrLine1": "rahmat",
+    "qrLine2": "Online payment via QR",
+    "humo": "Card payment (Humo)",
+    "amountLabel": "Amount due"
+  },
+  "paymentQr": {
+    "backAria": "Back",
+    "rahmat": "rahmat",
+    "scanTitle": "With your phone camera",
+    "scanRest": " scan the QR code and complete your order",
+    "hint": "Scan the QR code with your camera!"
+  },
+  "paymentProcessing": {
+    "message": "Processing payment…",
+    "followTerminal": "Follow the instructions on the terminal.",
+    "amountLabel": "Amount due"
+  },
+  "order": {
+    "enjoy": "Enjoy",
+    "appetite": "your meal",
+    "yourNumber": "Your order number",
+    "receiptTitle": "Don't forget your receipt",
+    "receiptHint": "Keep your receipts until you pick up your order",
+    "newOrder": "Start a new order"
+  },
+  "comboModal": {
+    "change": "Change",
+    "total": "Total: {amount}",
+    "addToCart": "Add to cart",
+    "loadingTitle": "Loading combo"
+  },
+  "comboChange": {
+    "title": "Change item",
+    "inCombo": "Included in combo",
+    "select": "Select",
+    "customizeComposition": "Customize composition",
+    "applyForExtra": "Change for + {amount}",
+    "backToPicks": "Back to items"
+  },
+  "pizza": {
+    "chooseCrust": "Choose crust",
+    "chooseDough": "Choose dough",
+    "chooseEdge": "Choose edge",
+    "toppingsTitle": "Add toppings",
+    "showAll": "Show all",
+    "showLess": "Show less",
+    "total": "Total: {amount}"
+  },
+  "upsell": {
+    "saucesTitle": "Sauces make it tastier!",
+    "drinksTitle": "Don't forget a drink!",
+    "skip": "Skip"
+  },
+  "admin": {
+    "title": "Admin",
+    "close": "Close",
+    "sync": "Sync",
+    "syncNow": "Sync now",
+    "testPrinter": "Test printer",
+    "testPayment": "Test payment",
+    "orders": "Local orders",
+    "thNumber": "#",
+    "thTotal": "Total",
+    "thSynced": "Synced",
+    "thCreated": "Created",
+    "yes": "yes",
+    "no": "no"
+  },
+  "errors": {
+    "kioskBridge": "Kiosk bridge is not available",
+    "paymentDeclined": "Payment declined. Please try again.",
+    "paymentFailed": "Could not complete payment.",
+    "generic": "Error"
+  },
+  "recommendations": {
+    "rec-chiabatta": { "name": "Meat Chiabatta", "deltaLabel": "+0 UZS" },
+    "rec-fri": { "name": "French fries" },
+    "rec-jaydari": { "name": "Country-style potatoes" },
+    "rec-pepperoni": { "name": "Pepperoni medium", "deltaLabel": "+0 UZS" },
+    "rec-tovuq": { "name": "Chicken & mushroom medium", "deltaLabel": "+10,000 UZS" },
+    "rec-hawaii": { "name": "Hawaiian medium", "deltaLabel": "+10,000 UZS" },
+    "rec-donar": { "name": "Donar pizza medium", "deltaLabel": "+17,000 UZS" }
+  },
+  "upsellItems": {
+    "maxsus": { "name": "Special sauce" },
+    "chili": { "name": "Chili sauce" },
+    "cheese-sauce": { "name": "Cheese sauce" },
+    "ketchup": { "name": "Ketchup" },
+    "cola-fountain": { "name": "Fountain Coca-Cola" },
+    "sprite-fountain": { "name": "Fountain Sprite" },
+    "fanta-fountain": { "name": "Fountain Fanta" },
+    "cola-05": { "name": "Coca-Cola 0.5 L" }
+  },
+  "pizzaTemplate": {
+    "crust": {
+      "thin": "Thin crust",
+      "thick": "Thick crust",
+      "cheese": "Cheese crust",
+      "hotdog": "Hot dog crust"
+    },
+    "topping": {
+      "kebab": "Kebab",
+      "tomato": "Tomato",
+      "cheese": "Cheese",
+      "pepper": "Bell pepper",
+      "mushroom": "Mushroom",
+      "potato": "Potato",
+      "sausage": "Sausage",
+      "chili": "Hot pepper"
+    }
+  },
+  "comboOptions": {
+    "alfredo": "Alfredo medium",
+    "cheese": "Cheese pizza medium",
+    "pepperoni": "Pepperoni medium",
+    "chicken-cheese": "Chicken & cheese medium",
+    "hawaii": "Hawaiian medium",
+    "halapeno": "Jalapeño medium",
+    "kebab": "Kebab pizza medium",
+    "donar": "Donar pizza medium",
+    "mex": "Mexican medium",
+    "burger": "Double cheeseburger medium",
+    "tovuq": "Chicken & mushroom medium",
+    "cola-15": "Coca-Cola 1.5 L",
+    "cola-zero": "Coca-Cola Zero 1.5 L",
+    "fanta": "Fanta 1.5 L",
+    "sprite": "Sprite 1.5 L"
+  },
+  "comboDescription": {
+    "qorbobo": "Choose 4 pizzas (30 cm) and 2 Coca-Cola (1.5 L). Serves 8–12"
+  },
+  "comboInCombo": "In combo"
+}
