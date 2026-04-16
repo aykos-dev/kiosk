@@ -117,6 +117,19 @@ export function ComboItemChangeModal({
     setPizzaSel(null);
   }, [selectedId, slot?.id]);
 
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.overflow;
+    const prevBody = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = prevHtml;
+      body.style.overflow = prevBody;
+    };
+  }, []);
+
   const selectedOpt = slot?.options?.find((o) => o.id === draft);
   const isPizza = selectedOpt && isComboPizzaOption(selectedOpt, slot);
 
@@ -215,7 +228,7 @@ export function ComboItemChangeModal({
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-end justify-center bg-[rgba(30,30,30,0.7)] p-0 sm:p-3"
+      className="fixed inset-0 z-[70] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] p-0 sm:p-3"
       role="dialog"
       aria-modal="true"
     >
@@ -247,7 +260,7 @@ export function ComboItemChangeModal({
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-20 pt-6 min-[400px]:px-6">
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-4 pb-20 pt-6 min-[400px]:px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {view === "pick" ? (
               <div className="mx-auto flex w-full max-w-[692px] flex-wrap justify-center gap-4">
                 {sortedOptions.map((opt) => {

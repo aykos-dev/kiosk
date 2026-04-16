@@ -52,7 +52,7 @@ export function WelcomeScreen({ onStart, onOpenSettings }) {
         <button
           type="button"
           onClick={onStart}
-          className="pointer-events-auto w-full max-w-md rounded-2xl bg-white py-5 text-[18px] font-semibold text-[#161616] shadow-lg transition hover:bg-neutral-100 active:scale-[0.99]"
+          className="pointer-events-auto w-full max-w-md rounded-2xl bg-white py-5 mb-3 text-[18px] font-semibold text-[#161616] shadow-lg transition hover:bg-neutral-100 active:scale-[0.99]"
         >
           {t('welcome.cta')}
         </button>

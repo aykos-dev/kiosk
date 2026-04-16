@@ -5,8 +5,7 @@ import iconTakeaway from '../../assets/icons/take-away.svg';
 
 const LANGS = [
   { id: 'uz', label: "O'zbek", flag: '🇺🇿' },
-  { id: 'ru', label: 'Русский', flag: '🇷🇺' },
-  { id: 'en', label: 'English', flag: '🇬🇧' },
+  { id: 'ru', label: 'Русский', flag: '🇷🇺' }
 ];
 
 export function LanguageScreen({
@@ -46,9 +45,8 @@ export function LanguageScreen({
           <button
             type="button"
             onClick={() => onOrderType('dine-in')}
-            className={`flex h-[240px] min-h-[240px] flex-1 flex-col items-center justify-center gap-5 rounded-[32px] bg-white px-6 py-5 shadow-[0px_2px_28px_0px_rgba(0,0,0,0.12)] transition ring-2 ${
-              orderType === 'dine-in' ? 'ring-brand-green' : 'ring-transparent'
-            }`}
+            className={`flex h-[240px] min-h-[240px] flex-1 flex-col items-center justify-center gap-5 rounded-[32px] bg-white px-6 py-5 shadow-[0px_2px_28px_0px_rgba(0,0,0,0.12)] transition ring-2 ${orderType === 'dine-in' ? 'ring-brand-green' : 'ring-transparent'
+              }`}
           >
             <img src={iconDineIn} alt="" className="h-[120px] w-[120px] shrink-0" />
             <span className="font-product-600 text-[24px] leading-8 text-ink">{t('language.dineIn')}</span>
@@ -56,9 +54,8 @@ export function LanguageScreen({
           <button
             type="button"
             onClick={() => onOrderType('takeaway')}
-            className={`flex h-[240px] min-h-[240px] flex-1 flex-col items-center justify-center gap-5 rounded-[32px] bg-white px-6 py-5 shadow-[0px_2px_28px_0px_rgba(0,0,0,0.12)] transition ring-2 ${
-              orderType === 'takeaway' ? 'ring-brand-green' : 'ring-transparent'
-            }`}
+            className={`flex h-[240px] min-h-[240px] flex-1 flex-col items-center justify-center gap-5 rounded-[32px] bg-white px-6 py-5 shadow-[0px_2px_28px_0px_rgba(0,0,0,0.12)] transition ring-2 ${orderType === 'takeaway' ? 'ring-brand-green' : 'ring-transparent'
+              }`}
           >
             <img src={iconTakeaway} alt="" className="h-[120px] w-[120px] shrink-0" />
             <span className="font-product-600 text-[24px] leading-8 text-ink">{t('language.takeaway')}</span>
@@ -75,11 +72,10 @@ export function LanguageScreen({
                   key={l.id}
                   type="button"
                   onClick={() => onLocale(l.id)}
-                  className={`flex h-[72px] min-h-[72px] flex-1 items-center justify-center gap-2 rounded-full px-4 py-4 transition ${
-                    active
+                  className={`flex h-[72px] min-h-[72px] flex-1 items-center justify-center gap-2 rounded-full px-4 py-4 transition ${active
                       ? 'border-2 border-brand-green bg-surface'
                       : 'border-2 border-transparent bg-surface'
-                  }`}
+                    }`}
                 >
                   <span className="text-2xl leading-none" aria-hidden>
                     {l.flag}

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
@@ -39,6 +39,14 @@ async function createMainWindow() {
   const minW = Number.isFinite(Number(k.minWindowWidth)) ? Number(k.minWindowWidth) : 518;
   const minH = Number.isFinite(Number(k.minWindowHeight)) ? Number(k.minWindowHeight) : 900;
 
+  const iconBase = path.join(__dirname, '../../assets/images/bellissimo-icon');
+  const iconPath =
+    process.platform === 'win32' && fs.existsSync(`${iconBase}.ico`)
+      ? `${iconBase}.ico`
+      : fs.existsSync(`${iconBase}.png`)
+        ? `${iconBase}.png`
+        : undefined;
+
   mainWindow = new BrowserWindow({
     width: winW,
     height: winH,
@@ -46,6 +54,7 @@ async function createMainWindow() {
     minHeight: minH,
     fullscreen,
     show: false,
+    ...(iconPath ? { icon: iconPath } : {}),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -222,6 +231,14 @@ app.whenReady().then(async () => {
       createMainWindow();
     }
   });
+}).catch((err) => {
+  const msg = err instanceof Error ? err.message : String(err);
+  console.error('[main-app] startup failed', err);
+  dialog.showErrorBox(
+    'Bellissimo Kiosk — startup failed',
+    `${msg}\n\nIf this persists after reinstall, contact support.`,
+  );
+  app.quit();
 });
 
 app.on('window-all-closed', () => {

@@ -53,8 +53,8 @@ export function KioskCartBar({ cart, total, onOpenCart, onDec, onInc }) {
         )}
       </div>
 
-      <div className="border-t border-black/10 px-6 pb-6 pt-4">
-        <div className="flex items-center justify-between gap-4">
+      <div className="border-t border-black/10 px-6 pb-6">
+        <div className="flex items-center justify-between gap-4 py-5">
           <p className="text-[22px] font-semibold leading-7 tracking-tight text-ink">{formatUzs(total)}</p>
           <button
             type="button"

@@ -48,6 +48,19 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
     });
   }, [upsell]);
 
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.overflow;
+    const prevBody = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = prevHtml;
+      body.style.overflow = prevBody;
+    };
+  }, []);
+
   function bump(id, delta) {
     setCounts((c) => {
       const n = Math.max(0, (c[id] ?? 0) + delta);
@@ -61,7 +74,7 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-end justify-center bg-[rgba(30,30,30,0.7)] motion-safe:animate-kiosk-backdrop"
+      className="fixed inset-0 z-[70] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] motion-safe:animate-kiosk-backdrop"
       role="dialog"
       aria-modal="true"
       aria-labelledby="pizza-upsell-title"
@@ -77,7 +90,7 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
           <IconClose />
         </button>
 
-        <div className="overflow-y-auto px-0 pb-44 pt-14">
+        <div className="min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain px-0 pb-44 pt-14 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div
             className="mb-8 flex flex-col motion-safe:animate-kiosk-content"
             style={{ animationDelay: "40ms" }}
@@ -138,7 +151,7 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
         />
 
         <div
-          className="absolute bottom-0 left-0 right-0 z-[5] rounded-t-[32px] border-t border-black/[0.04] bg-white/95 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4 shadow-[0_-8px_32px_rgba(0,0,0,0.08)] backdrop-blur-sm motion-safe:animate-kiosk-content"
+          className="absolute bottom-0 left-0 right-0 z-[5] rounded-t-[32px] border-t border-black/[0.04] bg-white/95 px-6 pb-[max(3rem,env(safe-area-inset-bottom))] pt-4 shadow-[0_-8px_32px_rgba(0,0,0,0.08)] backdrop-blur-sm motion-safe:animate-kiosk-content"
           style={{ animationDelay: "100ms" }}
         >
           <button

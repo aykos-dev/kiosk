@@ -76,11 +76,10 @@ export function PizzaCustomizeForm({
               key={s.id}
               type="button"
               onClick={() => setSize(s.id)}
-              className={`flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center rounded-xl px-3 py-3 text-[18px] font-semibold leading-5 transition ${
-                active
+              className={`flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center rounded-xl px-3 py-3 text-[18px] font-semibold leading-5 transition ${active
                   ? 'bg-white text-brand-green shadow-[0px_2px_4px_rgba(0,0,0,0.05)]'
                   : 'text-ink'
-              }`}
+                }`}
             >
               {s.label}
             </button>
@@ -122,64 +121,27 @@ export function PizzaCustomizeForm({
       )}
 
       <div key={sel.sizeId} className="flex flex-col gap-6 motion-safe:animate-kiosk-content">
-      <div className="flex flex-col gap-5 px-1">
-        <h3 className="font-product-700 text-[24px] leading-7 tracking-[-0.4px] text-ink">{crustTitle}</h3>
-        <div className="flex flex-wrap gap-1">
-          {template.crusts?.map((c) => {
-            const active = sel.crustId === c.id;
-            const crustLabel = pickCrustName(locale, c.id, c.name);
-            return (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => setCrust(c.id)}
-                className={`relative flex min-h-0 min-w-[140px] max-w-[170px] flex-1 flex-col items-center gap-2 overflow-hidden rounded-[24px] px-1 pb-3 pt-1 text-center ${
-                  active ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent'
-                }`}
-              >
-                <div className="pointer-events-none size-[162px] shrink-0 overflow-hidden rounded-2xl">
-                  <img src={c.image} alt="" className="h-full w-full object-cover" />
-                </div>
-                <div className="flex w-full flex-col gap-1 text-[18px] leading-6">
-                  <p className="font-inter-600 truncate font-semibold text-brand-green">{crustLabel}</p>
-                  <p className="font-inter-400 text-ink">
-                    {c.priceDelta === 0 ? t('common.currencyZero') : `+${formatUzs(c.priceDelta)}`}
-                  </p>
-                </div>
-                {active && (
-                  <span className="absolute right-[8.5px] top-[8.5px] flex size-8 items-center justify-center rounded-full bg-brand-green shadow-md">
-                    <IconCheck className="h-4 w-4 text-white" />
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {(template.borts?.length ?? 0) > 0 ? (
         <div className="flex flex-col gap-5 px-1">
-          <h3 className="font-product-700 text-[24px] leading-7 tracking-[-0.4px] text-ink">{t('pizza.chooseEdge')}</h3>
+          <h3 className="font-product-700 text-[24px] leading-7 tracking-[-0.4px] text-ink">{crustTitle}</h3>
           <div className="flex flex-wrap gap-1">
-            {template.borts.map((b) => {
-              const active = sel.bortId === b.id;
-              const bortLabel = pickCrustName(locale, b.id, b.name);
+            {template.crusts?.map((c) => {
+              const active = sel.crustId === c.id;
+              const crustLabel = pickCrustName(locale, c.id, c.name);
               return (
                 <button
-                  key={b.id}
+                  key={c.id}
                   type="button"
-                  onClick={() => setBort(b.id)}
-                  className={`relative flex min-h-0 min-w-[140px] max-w-[170px] flex-1 flex-col items-center gap-2 overflow-hidden rounded-[24px] px-1 pb-3 pt-1 text-center ${
-                    active ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent'
-                  }`}
+                  onClick={() => setCrust(c.id)}
+                  className={`relative flex min-h-0 min-w-[140px] max-w-[170px] flex-1 flex-col items-center gap-2 overflow-hidden rounded-[24px] px-1 pb-3 pt-1 text-center ${active ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent'
+                    }`}
                 >
                   <div className="pointer-events-none size-[162px] shrink-0 overflow-hidden rounded-2xl">
-                    <img src={b.image} alt="" className="h-full w-full object-cover" />
+                    <img src={c.image} alt="" className="h-full w-full object-cover" />
                   </div>
                   <div className="flex w-full flex-col gap-1 text-[18px] leading-6">
-                    <p className="font-inter-600 truncate font-semibold text-brand-green">{bortLabel}</p>
+                    <p className="font-inter-600 truncate font-semibold text-brand-green">{crustLabel}</p>
                     <p className="font-inter-400 text-ink">
-                      {b.priceDelta === 0 ? t('common.currencyZero') : `+${formatUzs(b.priceDelta)}`}
+                      {c.priceDelta === 0 ? t('common.currencyZero') : `+${formatUzs(c.priceDelta)}`}
                     </p>
                   </div>
                   {active && (
@@ -192,84 +154,117 @@ export function PizzaCustomizeForm({
             })}
           </div>
         </div>
-      ) : null}
 
-      <div className="flex flex-col gap-5 px-1">
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="font-product-700 flex-1 text-[24px] leading-7 tracking-[-0.4px] text-ink">
-            {t('pizza.toppingsTitle')}
-          </h3>
-          <span className="shrink-0 text-[14px] font-semibold leading-5 text-brand-green">
-            {toppingCount} / {maxT}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 gap-x-1 gap-y-4 sm:grid-cols-4">
-          {visibleToppings?.map((top) => {
-            const n = sel.toppings?.[top.id] ?? 0;
-            const toppingLabel = pickToppingName(locale, top.id, top.name);
-            const selected = n > 0;
-            return (
-              <div
-                key={top.id}
-                className={`relative flex min-w-0 flex-col gap-2 rounded-2xl p-1 pb-3 ${
-                  selected ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent bg-white'
-                }`}
-              >
-                <div className="aspect-square w-full overflow-hidden rounded-xl bg-white">
-                  <img src={top.image} alt="" className="h-full w-full object-cover" />
-                </div>
-                <div className="flex flex-col gap-1 text-center text-[18px] leading-6">
-                  <p className="font-inter-600 truncate font-semibold text-brand-green">{toppingLabel}</p>
-                  <p className="font-inter-400 text-ink">+{formatUzs(top.priceDelta)}</p>
-                </div>
+        {(template.borts?.length ?? 0) > 0 ? (
+          <div className="flex flex-col gap-5 px-1">
+            <h3 className="font-product-700 text-[24px] leading-7 tracking-[-0.4px] text-ink">{t('pizza.chooseEdge')}</h3>
+            <div className="flex flex-wrap gap-1">
+              {template.borts.map((b) => {
+                const active = sel.bortId === b.id;
+                const bortLabel = pickCrustName(locale, b.id, b.name);
+                return (
+                  <button
+                    key={b.id}
+                    type="button"
+                    onClick={() => setBort(b.id)}
+                    className={`relative flex min-h-0 min-w-[140px] max-w-[170px] flex-1 flex-col items-center gap-2 overflow-hidden rounded-[24px] px-1 pb-3 pt-1 text-center ${active ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent'
+                      }`}
+                  >
+                    <div className="pointer-events-none size-[162px] shrink-0 overflow-hidden rounded-2xl">
+                      <img src={b.image} alt="" className="h-full w-full object-cover" />
+                    </div>
+                    <div className="flex w-full flex-col gap-1 text-[18px] leading-6">
+                      <p className="font-inter-600 truncate font-semibold text-brand-green">{bortLabel}</p>
+                      <p className="font-inter-400 text-ink">
+                        {b.priceDelta === 0 ? t('common.currencyZero') : `+${formatUzs(b.priceDelta)}`}
+                      </p>
+                    </div>
+                    {active && (
+                      <span className="absolute right-[8.5px] top-[8.5px] flex size-8 items-center justify-center rounded-full bg-brand-green shadow-md">
+                        <IconCheck className="h-4 w-4 text-white" />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        <div className="flex flex-col gap-5 px-1">
+          <div className="flex items-start justify-between gap-4">
+            <h3 className="font-product-700 flex-1 text-[24px] leading-7 tracking-[-0.4px] text-ink">
+              {t('pizza.toppingsTitle')}
+            </h3>
+            <span className="shrink-0 text-[14px] font-semibold leading-5 text-brand-green">
+              {toppingCount} / {maxT}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-x-1 gap-y-4 sm:grid-cols-4">
+            {visibleToppings?.map((top) => {
+              const n = sel.toppings?.[top.id] ?? 0;
+              const toppingLabel = pickToppingName(locale, top.id, top.name);
+              const selected = n > 0;
+              return (
                 <div
-                  className={`flex h-10 w-full items-center rounded-full bg-surface px-3 ${
-                    n > 0 ? 'justify-between gap-2' : 'justify-center'
-                  }`}
+                  key={top.id}
+                  className={`relative flex min-w-0 flex-col gap-2 rounded-2xl p-1 pb-3 ${selected ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent bg-white'
+                    }`}
                 >
-                  {n > 0 && (
+                  <div className="aspect-square w-full overflow-hidden rounded-xl bg-white">
+                    <img src={top.image} alt="" className="h-full w-full object-cover" />
+                  </div>
+                  <div className="flex flex-col gap-1 text-center text-[18px] leading-6">
+                    <p className="font-inter-600 truncate font-semibold text-brand-green">{toppingLabel}</p>
+                    <p className="font-inter-400 text-ink">+{formatUzs(top.priceDelta)}</p>
+                  </div>
+                  <div
+                    className={`flex h-10 w-full items-center rounded-full bg-surface px-3 ${n > 0 ? 'justify-between gap-2' : 'justify-center'
+                      }`}
+                  >
+                    {n > 0 && (
+                      <button
+                        type="button"
+                        className="flex size-6 shrink-0 items-center justify-center rounded-md hover:bg-black/5"
+                        onClick={() => bumpTopping(top.id, -1)}
+                        aria-label={t('common.decrease')}
+                      >
+                        <IconMinus className="h-5 w-5" />
+                      </button>
+                    )}
+                    {n > 0 ? (
+                      <span className="min-w-[1.5ch] flex-1 text-center text-[15px] font-semibold leading-5">{n}</span>
+                    ) : null}
                     <button
                       type="button"
-                      className="flex size-6 shrink-0 items-center justify-center rounded-md hover:bg-black/5"
-                      onClick={() => bumpTopping(top.id, -1)}
-                      aria-label={t('common.decrease')}
+                      className="flex size-6 shrink-0 items-center justify-center rounded-md hover:bg-black/5 disabled:opacity-40"
+                      onClick={() => bumpTopping(top.id, 1)}
+                      disabled={toppingCount >= maxT}
+                      aria-label={t('common.add')}
                     >
-                      <IconMinus className="h-5 w-5" />
+                      <IconPlus className="h-5 w-5" />
                     </button>
+                  </div>
+                  {selected && (
+                    <span className="absolute right-[8.5px] top-[8.5px] flex size-8 items-center justify-center rounded-full bg-brand-green shadow-md">
+                      <IconCheck className="h-4 w-4 text-white" />
+                    </span>
                   )}
-                  {n > 0 ? (
-                    <span className="min-w-[1.5ch] flex-1 text-center text-[15px] font-semibold leading-5">{n}</span>
-                  ) : null}
-                  <button
-                    type="button"
-                    className="flex size-6 shrink-0 items-center justify-center rounded-md hover:bg-black/5 disabled:opacity-40"
-                    onClick={() => bumpTopping(top.id, 1)}
-                    disabled={toppingCount >= maxT}
-                    aria-label={t('common.add')}
-                  >
-                    <IconPlus className="h-5 w-5" />
-                  </button>
                 </div>
-                {selected && (
-                  <span className="absolute right-[8.5px] top-[8.5px] flex size-8 items-center justify-center rounded-full bg-brand-green shadow-md">
-                    <IconCheck className="h-4 w-4 text-white" />
-                  </span>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+          {(template.toppings?.length ?? 0) > 4 && (
+            <button
+              type="button"
+              onClick={() => setShowAllToppings((v) => !v)}
+              className="flex w-full items-center justify-center gap-2 rounded-full py-3 text-[18px] font-semibold text-brand-green"
+            >
+              {showAllToppings ? t('pizza.showLess') : t('pizza.showAll')}
+              <IconChevronDown className={`h-4 w-4 transition ${showAllToppings ? 'rotate-180' : ''}`} />
+            </button>
+          )}
         </div>
-        {(template.toppings?.length ?? 0) > 4 && (
-          <button
-            type="button"
-            onClick={() => setShowAllToppings((v) => !v)}
-            className="flex w-full items-center justify-center gap-2 rounded-full py-3 text-[18px] font-semibold text-brand-green"
-          >
-            {showAllToppings ? t('pizza.showLess') : t('pizza.showAll')}
-            <IconChevronDown className={`h-4 w-4 transition ${showAllToppings ? 'rotate-180' : ''}`} />
-          </button>
-        )}
-      </div>
       </div>
     </div>
   );

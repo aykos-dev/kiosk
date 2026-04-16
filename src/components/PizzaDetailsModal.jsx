@@ -44,6 +44,19 @@ export function PizzaDetailsModal({ product, template, onClose, onContinue, badg
     setSel(initPizzaSelections(mergeApiTemplateForSize(template, sel.sizeId, locale)));
   }, [sel.sizeId, template, locale]);
 
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.overflow;
+    const prevBody = body.style.overflow;
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    return () => {
+      html.style.overflow = prevHtml;
+      body.style.overflow = prevBody;
+    };
+  }, []);
+
   const unitPrice = useMemo(
     () => computePizzaUnitPrice(resolvedTemplate, basePrice, sel),
     [resolvedTemplate, basePrice, sel],
@@ -78,13 +91,13 @@ export function PizzaDetailsModal({ product, template, onClose, onContinue, badg
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(30,30,30,0.7)]"
+      className="fixed inset-0 z-[60] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="pizza-modal-title"
     >
       <div className="flex max-h-[min(1200px,92vh)] w-full max-w-kiosk flex-col overflow-hidden rounded-t-[32px] bg-white shadow-dock">
-        <div className="flex max-h-[inherit] flex-col gap-6 overflow-y-auto px-6 pb-32 pt-8">
+        <div className="flex max-h-[inherit] min-h-0 flex-col gap-6 overflow-y-auto overflow-x-hidden overscroll-contain px-6 pb-32 pt-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex w-full justify-end">
             <button
               type="button"
