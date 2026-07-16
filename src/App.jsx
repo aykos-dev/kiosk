@@ -23,7 +23,11 @@ import { buildCartRecommendationsFromCategories } from './lib/cartRecommendation
 import { deriveCartState } from './lib/cartUtils.js';
 import { tEntity } from './lib/tEntity.js';
 import { useAppShellEffects } from './hooks/useAppShellEffects.js';
-import { DEFAULT_IDLE_SESSION_MS, useIdleSessionWarning } from './hooks/useIdleSessionWarning.js';
+import {
+  DEFAULT_IDLE_COUNTDOWN_SECONDS,
+  DEFAULT_IDLE_SESSION_MS,
+  useIdleSessionWarning,
+} from './hooks/useIdleSessionWarning.js';
 import { useComboPizzaFlow } from './hooks/useComboPizzaFlow.js';
 import { useI18n } from './hooks/useI18n.js';
 import { useKioskPayment } from './hooks/useKioskPayment.js';
@@ -81,7 +85,7 @@ export default function App() {
 
   const idleSession = useIdleSessionWarning({
     idleMs,
-    countdownSeconds: 15,
+    countdownSeconds: DEFAULT_IDLE_COUNTDOWN_SECONDS,
     onExpire: resetFlow,
     enabled:
       (screen === 'menu' || screen === 'cart') && !adminOpen && !backCartModalOpen,

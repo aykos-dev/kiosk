@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+/** Exponential backoff base between per-request retries: 500ms, 1s, 2s, … */
+const RETRY_BACKOFF_BASE_MS = 500;
+
 /**
  * @param {{ baseUrl: string; timeout: number; retryAttempts: number }} config
  */
@@ -25,7 +28,7 @@ export function createApiClient(config) {
         return { ok: true, status: res.status, data: res.data };
       } catch (e) {
         lastErr = e;
-        const delay = 500 * 2 ** i;
+        const delay = RETRY_BACKOFF_BASE_MS * 2 ** i;
         await new Promise((r) => setTimeout(r, delay));
       }
     }

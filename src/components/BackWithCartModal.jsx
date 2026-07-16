@@ -1,4 +1,5 @@
 import { useI18n } from '../hooks/useI18n.js';
+import { backdropClose } from '../lib/backdropClose.js';
 
 /**
  * Confirm leaving menu when cart has items (Figma 4287:26198).
@@ -9,6 +10,7 @@ export function BackWithCartModal({ open, onCancel, onConfirm }) {
 
   return (
     <div
+      onClick={backdropClose(onCancel)}
       className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(30,30,30,0.7)] px-4"
       role="dialog"
       aria-modal="true"

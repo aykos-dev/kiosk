@@ -7,6 +7,7 @@ import {
   DEFAULT_KIOSK_ORGANIZATION_ID,
 } from '../lib/organizationConstants.js';
 import { queryKeys } from '../api/queryKeys.js';
+import { backdropClose } from '../lib/backdropClose.js';
 
 /**
  * Staff-only: configure city / organization for payment types and orgs API.
@@ -45,6 +46,7 @@ export function KioskSettingsModal({ open, onClose }) {
 
   return (
     <div
+      onClick={backdropClose(onClose)}
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 animate-kiosk-backdrop"
       role="dialog"
       aria-modal="true"
@@ -85,7 +87,7 @@ export function KioskSettingsModal({ open, onClose }) {
           <button
             type="button"
             onClick={handleSave}
-            className="min-h-[48px] flex-1 rounded-full bg-brand-green px-6 py-3 font-inter text-[16px] font-semibold text-white transition hover:bg-[#033a20] active:scale-[0.99]"
+            className="min-h-[48px] flex-1 rounded-full bg-brand-green px-6 py-3 font-inter text-[16px] font-semibold text-white transition hover:bg-brand-green-dark active:scale-[0.99]"
           >
             {t('settings.save')}
           </button>

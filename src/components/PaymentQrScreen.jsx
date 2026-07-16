@@ -40,7 +40,7 @@ export function PaymentQrScreen({ onBack, qrUrl = DEFAULT_QR_URL }) {
   const { dataUrl, size } = usePaymentQrDataUrl(qrUrl);
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#00501f]">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-brand-green-deep">
       {/* Top glow (Figma ellipse) */}
       <div
         className="pointer-events-none absolute -right-32 -top-48 h-[520px] w-[520px] rounded-full bg-white/[0.12] blur-2xl"

@@ -43,8 +43,9 @@ export async function fetchSlider(locale = 'uz') {
         'Accept-Language': localeToAcceptLanguage(locale),
       },
     });
-    console.log(raw)
+    console.log('[slides] API response', raw);
     const slides = normalizeSliderPayload(raw);
+    console.log('[slides] normalized', slides);
     if (!Array.isArray(slides)) throw new Error('Invalid slider payload');
     await saveCatalogSnapshot('slider', slides);
     return slides;

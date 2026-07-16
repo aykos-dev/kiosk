@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getDefaultApiBaseUrl } from './config.js';
+import { API_CATALOG_TIMEOUT_MS } from '../lib/apiDefaults.js';
 
 export const apiClient = axios.create({
   baseURL: getDefaultApiBaseUrl().replace(/\/$/, ''),
@@ -7,5 +8,5 @@ export const apiClient = axios.create({
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
-  timeout: 30_000,
+  timeout: API_CATALOG_TIMEOUT_MS,
 });

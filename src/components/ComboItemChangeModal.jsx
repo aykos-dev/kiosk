@@ -14,6 +14,7 @@ import {
 import { comboOptionLabel, pickCrustName } from "../i18n/translate.js";
 import { tEntity } from "../lib/tEntity.js";
 import { useI18n } from "../hooks/useI18n.js";
+import { backdropClose } from "../lib/backdropClose.js";
 import { PizzaCustomizeForm } from "./PizzaCustomizeForm.jsx";
 
 function IconClose({ className = "h-8 w-8" }) {
@@ -228,6 +229,7 @@ export function ComboItemChangeModal({
 
   return (
     <div
+      onClick={backdropClose(onClose)}
       className="fixed inset-0 z-[70] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] p-0 sm:p-3"
       role="dialog"
       aria-modal="true"
@@ -273,7 +275,7 @@ export function ComboItemChangeModal({
                       onClick={() => setDraft(opt.id)}
                       className={`relative flex w-full max-w-[220px] flex-col gap-3 rounded-[28px] bg-white px-2 pb-4 pt-2 text-left shadow-card transition sm:w-[220px] ${
                         selected
-                          ? "border-2 border-[#03381e] ring-0"
+                          ? "border-2 border-brand-green-ink ring-0"
                           : "border-2 border-transparent"
                       }`}
                     >
@@ -369,7 +371,7 @@ export function ComboItemChangeModal({
               <button
                 type="button"
                 onClick={openCustomize}
-                className="font-product-600 min-h-[56px] w-full max-w-[360px] rounded-full bg-[#ffc600] px-6 py-3 text-[18px] leading-6 tracking-[-0.15px] text-ink shadow-none transition hover:brightness-95 active:scale-[0.99]"
+                className="font-product-600 min-h-[56px] w-full max-w-[360px] rounded-full bg-brand-yellow px-6 py-3 text-[18px] leading-6 tracking-[-0.15px] text-ink shadow-none transition hover:brightness-95 active:scale-[0.99]"
               >
                 {t("comboChange.customizeComposition")}
               </button>
@@ -390,7 +392,7 @@ export function ComboItemChangeModal({
             <button
               type="button"
               onClick={handleConfirm}
-              className="font-product-600 min-h-[56px] w-full min-w-[200px] shrink-0 rounded-full bg-brand-green px-6 py-3 text-[18px] leading-6 tracking-[-0.15px] text-white shadow-[0px_4px_32px_rgba(0,0,0,0.1)] transition hover:bg-[#033a20] active:scale-[0.99] sm:w-auto sm:max-w-[360px] sm:flex-1"
+              className="font-product-600 min-h-[56px] w-full min-w-[200px] shrink-0 rounded-full bg-brand-green px-6 py-3 text-[18px] leading-6 tracking-[-0.15px] text-white shadow-[0px_4px_32px_rgba(0,0,0,0.1)] transition hover:bg-brand-green-dark active:scale-[0.99] sm:w-auto sm:max-w-[360px] sm:flex-1"
             >
               {ctaLabel}
             </button>

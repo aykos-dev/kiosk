@@ -58,6 +58,7 @@
     "dineIn": "В зале",
     "takeaway": "На вынос",
     "chooseLanguage": "Выберите язык",
+    "chooseOrderType": "Выберите тип заказа",
     "continue": "Продолжить"
   },
   "cartBar": {

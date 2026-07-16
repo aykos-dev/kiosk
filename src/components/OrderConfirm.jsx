@@ -59,7 +59,7 @@ export function OrderConfirm({
   return (
     <div className="flex h-[100dvh] min-h-0 flex-col overflow-hidden bg-[#fffffd]">
       {/* Green hero: no overflow-hidden here — it clipped the arched SVG; no white overlay (it sat on top of glyphs). */}
-      <section className="relative shrink-0 bg-[#00501f] pb-8 pt-5 sm:pb-10 sm:pt-6">
+      <section className="relative shrink-0 bg-brand-green-deep pb-8 pt-5 sm:pb-10 sm:pt-6">
         <div className="relative z-10 flex items-center justify-between gap-3 px-5 pt-2 sm:gap-4 sm:px-6 sm:pt-3">
           <div className="flex min-w-0 flex-col pt-0.5">
             <img
@@ -71,7 +71,7 @@ export function OrderConfirm({
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm sm:h-11 sm:w-11">
               <Phone
-                className="h-5 w-5 text-[#00501f]"
+                className="h-5 w-5 text-brand-green-deep"
                 strokeWidth={2.2}
                 aria-hidden
               />
@@ -92,7 +92,7 @@ export function OrderConfirm({
           />
         </div> */}
       </section>
-<div className="h-[100px] bg-[#00501f]"/>
+<div className="h-[100px] bg-brand-green-deep"/>
       {/* Rounded transition from Figma asset — scales with container width (intrinsic viewBox aspect ratio). */}
       <div className="relative z-[1] w-full shrink-0 leading-[0]">
         <img
@@ -142,7 +142,7 @@ export function OrderConfirm({
         </div>
       </main>
 
-      <footer className="shrink-0 bg-[#00501f] px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pb-8 sm:pt-8">
+      <footer className="shrink-0 bg-brand-green-deep px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pb-8 sm:pt-8">
         <p className="text-center font-product text-[36px] font-bold leading-tight tracking-[-0.02em] text-white sm:text-[44px] sm:leading-[48px]">
           {t("common.orderWord")}
         </p>

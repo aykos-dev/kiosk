@@ -1,5 +1,8 @@
 import { translationTitle } from './tEntity.js';
 
+/** Fallback topping cap when the API group omits `maxAmount`. */
+const DEFAULT_MAX_TOPPINGS = 16;
+
 /**
  * Map API modifier group products to pizza template options (price delta vs cheapest in group).
  */
@@ -40,7 +43,7 @@ function buildModifierLayersFromDish(dish, locale) {
     : [];
 
   const maxToppings = Number(dish.toppings?.maxAmount);
-  const maxT = Number.isFinite(maxToppings) && maxToppings > 0 ? maxToppings : 16;
+  const maxT = Number.isFinite(maxToppings) && maxToppings > 0 ? maxToppings : DEFAULT_MAX_TOPPINGS;
 
   const defaultCrustId = dish.crusts?.defaultProductId ?? crusts[0]?.id;
   const defaultBortId = dish.borts?.defaultProductId ?? borts[0]?.id;

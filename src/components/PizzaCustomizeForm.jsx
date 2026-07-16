@@ -132,7 +132,7 @@ export function PizzaCustomizeForm({
                   key={c.id}
                   type="button"
                   onClick={() => setCrust(c.id)}
-                  className={`relative flex min-h-0 min-w-[140px] max-w-[170px] flex-1 flex-col items-center gap-2 overflow-hidden rounded-[24px] px-1 pb-3 pt-1 text-center ${active ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent'
+                  className={`relative flex min-h-0 min-w-[140px] max-w-[170px] flex-1 flex-col items-center gap-2 overflow-hidden rounded-[24px] px-1 pb-3 pt-1 text-center ${active ? 'border-[1.5px] border-brand-green-ink' : 'border border-transparent'
                     }`}
                 >
                   <div className="pointer-events-none size-[162px] shrink-0 overflow-hidden rounded-2xl">
@@ -167,7 +167,7 @@ export function PizzaCustomizeForm({
                     key={b.id}
                     type="button"
                     onClick={() => setBort(b.id)}
-                    className={`relative flex min-h-0 min-w-[140px] max-w-[170px] flex-1 flex-col items-center gap-2 overflow-hidden rounded-[24px] px-1 pb-3 pt-1 text-center ${active ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent'
+                    className={`relative flex min-h-0 min-w-[140px] max-w-[170px] flex-1 flex-col items-center gap-2 overflow-hidden rounded-[24px] px-1 pb-3 pt-1 text-center ${active ? 'border-[1.5px] border-brand-green-ink' : 'border border-transparent'
                       }`}
                   >
                     <div className="pointer-events-none size-[162px] shrink-0 overflow-hidden rounded-2xl">
@@ -208,7 +208,7 @@ export function PizzaCustomizeForm({
               return (
                 <div
                   key={top.id}
-                  className={`relative flex min-w-0 flex-col gap-2 rounded-2xl p-1 pb-3 ${selected ? 'border-[1.5px] border-[#03381e]' : 'border border-transparent bg-white'
+                  className={`relative flex min-w-0 flex-col gap-2 rounded-2xl p-1 pb-3 ${selected ? 'border-[1.5px] border-brand-green-ink' : 'border border-transparent bg-white'
                     }`}
                 >
                   <div className="aspect-square w-full overflow-hidden rounded-xl bg-white">

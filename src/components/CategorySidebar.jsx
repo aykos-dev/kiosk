@@ -6,7 +6,7 @@ export function CategorySidebar({ categories = [], activeId, onSelect }) {
   const { t, locale } = useI18n();
 
   return (
-    <aside className="flex h-full min-h-0 w-[180px] shrink-0 flex-col gap-4 overflow-y-auto overflow-x-hidden overscroll-contain border-r border-black/15 px-2 py-6 min-[560px]:w-[204px] min-[560px]:px-3 pb-[240px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <aside className="flex h-full min-h-0 w-[180px] shrink-0 flex-col gap-4 overflow-y-auto overflow-x-hidden overscroll-contain border-r border-black/15 px-2 py-6 pb-8 min-[560px]:w-[204px] min-[560px]:px-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {categories.map((cat) => {
         const active = cat.id === activeId;
         const hasIcon = cat.icon != null && String(cat.icon).trim() !== '';

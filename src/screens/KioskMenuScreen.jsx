@@ -61,7 +61,7 @@ export function KioskMenuScreen({
         </div>
       )}
 
-      <div className="relative h-[calc(min(100vw,962px)*255/740)] w-full shrink-0 overflow-hidden bg-brand-orange">
+      <div className="relative aspect-[740/255] w-full shrink-0 overflow-hidden bg-brand-orange">
         <MenuHeroSlider slides={heroSlides} />
       </div>
 
@@ -71,7 +71,7 @@ export function KioskMenuScreen({
           activeId={categoryId}
           onSelect={onSelectCategory}
         />
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-[clamp(15rem,32vh,20rem)] pt-8">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-8 pt-8">
           <div className="flex flex-wrap justify-center gap-6">
             {activeItems.map((product) => (
               <ProductCard

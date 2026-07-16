@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../hooks/useI18n.js';
+import { formatUzs } from '../lib/formatUzs.js';
+import { backdropClose } from '../lib/backdropClose.js';
 
 export function AdminPanel({ open, onClose }) {
   const { t } = useI18n();
@@ -16,7 +18,10 @@ export function AdminPanel({ open, onClose }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+    <div
+      onClick={backdropClose(onClose)}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+    >
       <div className="max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b px-6 py-4">
           <h2 className="text-2xl font-bold text-neutral-900">{t('admin.title')}</h2>
@@ -74,7 +79,7 @@ export function AdminPanel({ open, onClose }) {
                   {orders.map((o) => (
                     <tr key={o.id} className="border-t">
                       <td className="px-3 py-2 font-semibold">{o.order_number}</td>
-                      <td className="px-3 py-2">{Number(o.total).toFixed(2)}</td>
+                      <td className="px-3 py-2">{formatUzs(o.total)}</td>
                       <td className="px-3 py-2">{o.synced ? t('admin.yes') : t('admin.no')}</td>
                       <td className="px-3 py-2 text-xs">{o.created_at}</td>
                     </tr>

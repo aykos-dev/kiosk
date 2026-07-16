@@ -3,6 +3,7 @@ import { resolveProductImage } from '../lib/menuProduct.js';
 import { tEntity } from '../lib/tEntity.js';
 import { comboOptionLabel, translateFallback } from '../i18n/translate.js';
 import { computeComboDelta, computeComboPizzaExtrasSum, getOptionForSlot } from '../lib/comboPrice.js';
+import { backdropClose } from '../lib/backdropClose.js';
 import { useI18n } from '../hooks/useI18n.js';
 
 function IconClose({ className = 'h-8 w-8' }) {
@@ -73,6 +74,7 @@ export function ComboDetailsModal({
   if (loading || !combo) {
     return (
       <div
+        onClick={backdropClose(onClose)}
         className="fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(30,30,30,0.7)] p-0 sm:p-3"
         role="dialog"
         aria-modal="true"
@@ -141,7 +143,7 @@ export function ComboDetailsModal({
           <div className="flex flex-col items-center gap-2 px-1 text-center sm:px-2">
             <h2
               id="combo-modal-title"
-              className="font-product-700 w-full text-[clamp(1.75rem,4.2vw,2.25rem)] leading-[1.1] tracking-[-0.02em] text-[#ff2e00]"
+              className="font-product-700 w-full text-[clamp(1.75rem,4.2vw,2.25rem)] leading-[1.1] tracking-[-0.02em] text-brand-red"
             >
               {tEntity(product, locale, 'name')}
             </h2>
@@ -194,7 +196,7 @@ export function ComboDetailsModal({
             <button
               type="button"
               onClick={onConfirm}
-              className="font-inter-600 w-full rounded-full bg-brand-green py-4 text-[clamp(1rem,2.8vw,1.125rem)] leading-6 text-white shadow-md transition hover:bg-[#033a20] active:scale-[0.99]"
+              className="font-inter-600 w-full rounded-full bg-brand-green py-4 text-[clamp(1rem,2.8vw,1.125rem)] leading-6 text-white shadow-md transition hover:bg-brand-green-dark active:scale-[0.99]"
             >
               {t('comboModal.addToCart')}
             </button>

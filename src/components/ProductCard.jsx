@@ -87,19 +87,19 @@ export function ProductCard({ product, qty = 0, onAdd, onComboOpen, onPizzaOpen,
           {t('common.add')}
         </button>
       ) : (
-        <div className="flex h-10 w-[232px] items-center justify-between rounded-full bg-surface px-3 py-1.5">
+        <div className="flex h-11 w-[232px] items-center rounded-full bg-surface">
           <button
             type="button"
-            className="flex h-6 w-6 items-center justify-center rounded-md hover:bg-black/5"
+            className="flex h-full flex-1 items-center justify-center rounded-l-full transition active:bg-black/5"
             onClick={() => onDec(product.id)}
             aria-label={t('common.decrease')}
           >
             <IconMinus />
           </button>
-          <span className="min-w-[2ch] text-center text-[15px] font-semibold leading-5 text-ink">{qty}</span>
+          <span className="min-w-[3ch] text-center text-[15px] font-semibold leading-5 text-ink">{qty}</span>
           <button
             type="button"
-            className="flex h-6 w-6 items-center justify-center rounded-md hover:bg-black/5"
+            className="flex h-full flex-1 items-center justify-center rounded-r-full transition active:bg-black/5"
             onClick={() => onInc(product.id)}
             aria-label={t('common.increase')}
           >

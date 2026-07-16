@@ -45,19 +45,29 @@ module.exports = {
         'kiosk-qty': 'kioskQtyPop 0.18s ease-out',
       },
       maxWidth: {
-        kiosk: '962px',
+        // Kiosk fills the full panel width (portrait). `max-w-kiosk` is kept as
+        // a semantic hook across the shell/modals but no longer clamps width.
+        kiosk: '100%',
       },
       colors: {
         brand: {
           orange: '#ff3300',
           green: '#04522c',
+          'green-dark': '#033a20', // primary-button hover / pressed
+          'green-deep': '#00501f', // full-bleed payment & order-confirm backgrounds
+          'green-ink': '#03381e', // selected-option borders on green surfaces
           accent: '#ff3300',
+          red: '#ff2e00', // combo / pizza price headline
+          yellow: '#ffc600', // combo confirm CTA
         },
         ink: {
           DEFAULT: '#161616',
           muted: '#8e8e8e',
         },
-        surface: '#f2f2f2',
+        surface: {
+          DEFAULT: '#f2f2f2',
+          soft: '#f7f7f7', // stepper pill background
+        },
       },
       boxShadow: {
         card: '0px 2px 20px 0px rgba(0,0,0,0.16)',

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 
-import { loadAppConfig } from './config.js';
+import { loadAppConfig, getWindowOptions } from './config.js';
 import { createPaymentTerminal } from './hardware/PaymentTerminal.js';
 import { createReceiptPrinter } from './hardware/ReceiptPrinter.js';
 import * as dbApi from '../src/services/database.js';
@@ -16,28 +16,39 @@ let printer;
 let syncManager;
 let appConfig;
 
+/** Methods that charge the physical card terminal. */
+const TERMINAL_METHODS = new Set(['card', 'humo']);
+/** Methods settled outside the kiosk (recorded as pending, no terminal charge). */
+const RECORD_ONLY_METHODS = new Set(['cash', 'qr']);
+
+/**
+ * Authoritative order total (integer so'm) derived from line items, so the
+ * amount charged/recorded never depends on a client-supplied number.
+ */
+function deriveOrderTotal(items) {
+  if (!Array.isArray(items)) return 0;
+  let sum = 0;
+  for (const i of items) {
+    const line = Number(i?.lineTotal);
+    if (Number.isFinite(line)) {
+      sum += line;
+    } else {
+      sum += (Number(i?.price) || 0) * (Number(i?.qty) || 1);
+    }
+  }
+  return Math.round(sum);
+}
+
 function broadcast(channel, payload) {
   BrowserWindow.getAllWindows().forEach((w) => {
     if (!w.isDestroyed()) w.webContents.send(channel, payload);
   });
 }
 
-function attachTerminalListeners(t) {
-  const forward = (name) => (detail) => broadcast('terminal:event', { type: name, detail });
-  t.on('payment-started', forward('payment-started'));
-  t.on('payment-approved', forward('payment-approved'));
-  t.on('payment-declined', forward('payment-declined'));
-  t.on('payment-error', forward('payment-error'));
-}
-
 async function createMainWindow() {
   appConfig = loadAppConfig();
-  const fullscreen = appConfig.kiosk?.fullscreen !== false;
-  const k = appConfig.kiosk || {};
-  const winW = Number.isFinite(Number(k.windowWidth)) ? Number(k.windowWidth) : 1080;
-  const winH = Number.isFinite(Number(k.windowHeight)) ? Number(k.windowHeight) : 1920;
-  const minW = Number.isFinite(Number(k.minWindowWidth)) ? Number(k.minWindowWidth) : 518;
-  const minH = Number.isFinite(Number(k.minWindowHeight)) ? Number(k.minWindowHeight) : 900;
+  const { width, height, minWidth, minHeight, fullscreen, resizable } =
+    getWindowOptions(appConfig);
 
   const iconBase = path.join(__dirname, '../../assets/images/bellissimo-icon');
   const iconPath =
@@ -48,11 +59,12 @@ async function createMainWindow() {
         : undefined;
 
   mainWindow = new BrowserWindow({
-    width: winW,
-    height: winH,
-    minWidth: minW,
-    minHeight: minH,
+    width,
+    height,
+    minWidth,
+    minHeight,
     fullscreen,
+    resizable,
     show: false,
     ...(iconPath ? { icon: iconPath } : {}),
     webPreferences: {
@@ -115,63 +127,104 @@ function setupIpc() {
   });
 
   ipcMain.handle('checkout:process', async (_e, payload) => {
-    const { items, total } = payload || {};
-    const amount = Number(total);
-    if (!Number.isFinite(amount) || amount <= 0) {
+    const { items, total, method, orderId } = payload || {};
+    const paymentMethod = TERMINAL_METHODS.has(method) || RECORD_ONLY_METHODS.has(method)
+      ? method
+      : 'card';
+
+    // (2.5) Never trust the client total for the charge amount. Re-derive it
+    // from the line items and reject if it disagrees with what the UI showed.
+    const amount = deriveOrderTotal(items);
+    if (!Number.isInteger(amount) || amount <= 0) {
       return { ok: false, reason: 'invalid_amount' };
     }
+    const claimed = Math.round(Number(total));
+    if (Number.isFinite(claimed) && claimed !== amount) {
+      console.warn(`[checkout] client total ${claimed} != derived ${amount}; using derived`);
+    }
+
+    // (2.1) Idempotency: a stable id from the renderer means an accidental
+    // re-dispatch of the same checkout never charges or records twice.
+    const id = typeof orderId === 'string' && orderId ? orderId : uuidv4();
+    const existing = dbApi.getOrder(db, id);
+    if (existing && existing.payment_status === 'completed') {
+      return { ok: true, orderNumber: existing.order_number, orderId: id, alreadyProcessed: true };
+    }
+
+    const chargesCard = TERMINAL_METHODS.has(paymentMethod);
+    let transactionId = existing?.payment_transaction_id ?? null;
+
     try {
-      const result = await terminal.processPayment(amount);
-      if (result.status === 'declined') {
-        return { ok: false, reason: 'declined' };
+      if (chargesCard) {
+        const result = await terminal.processPayment(amount);
+        if (result.status === 'declined') {
+          return { ok: false, reason: 'declined' };
+        }
+        if (result.status !== 'approved' || !result.transactionId) {
+          return { ok: false, reason: result.status || 'unknown' };
+        }
+        transactionId = result.transactionId;
       }
-      if (result.status !== 'approved' || !result.transactionId) {
-        return { ok: false, reason: result.status || 'unknown' };
-      }
+    } catch (err) {
+      // Charge failed before any money moved — safe to send the user back.
+      console.error('[checkout] terminal', err);
+      return { ok: false, reason: 'error', message: err.message };
+    }
 
-      const orderNumber = dbApi.nextOrderNumber(db);
-      const id = uuidv4();
-      const createdAt = new Date().toISOString();
-      const row = {
-        id,
-        order_number: orderNumber,
-        items: JSON.stringify(items || []),
-        total: amount,
-        payment_status: 'completed',
-        payment_transaction_id: result.transactionId,
-        created_at: createdAt,
-      };
-      dbApi.insertOrder(db, row);
-      dbApi.enqueueSync(db, id);
+    // (2.1) Payment has settled (card) or is collected out-of-band (cash/QR).
+    // Record the order durably BEFORE printing so a printer fault can never
+    // lose a paid order or bounce the customer back into a second charge.
+    const createdAt = existing?.created_at ?? new Date().toISOString();
+    const orderNumber = existing?.order_number ?? dbApi.nextOrderNumber(db, createdAt);
+    const row = {
+      id,
+      order_number: orderNumber,
+      items: JSON.stringify(items || []),
+      total: amount,
+      payment_status: chargesCard ? 'completed' : 'pending',
+      payment_method: paymentMethod,
+      payment_transaction_id: transactionId,
+      created_at: createdAt,
+    };
+    try {
+      dbApi.upsertOrder(db, row);
+      dbApi.enqueueSyncOnce(db, id);
+    } catch (err) {
+      console.error('[checkout] persist', err);
+      return { ok: false, reason: 'error', message: err.message };
+    }
 
+    // (2.1) Printing is best-effort; a failure is logged, not fatal.
+    let printed = true;
+    try {
       const printItems = (items || []).map((i) => ({
         name: i.name,
         qty: i.qty || 1,
         price: i.price,
         lineTotal: i.lineTotal ?? i.price * (i.qty || 1),
       }));
-
       await printer.print({
         orderNumber,
         items: printItems,
         total: amount,
-        transactionId: result.transactionId,
+        transactionId,
         timestamp: createdAt,
       });
-
-      syncManager.triggerNow().catch((err) => console.warn('[sync] trigger', err));
-
-      return {
-        ok: true,
-        orderNumber,
-        transactionId: result.transactionId,
-        orderId: id,
-      };
     } catch (err) {
-      console.error('[checkout]', err);
-      broadcast('terminal:event', { type: 'payment-error', detail: { message: err.message } });
-      return { ok: false, reason: 'error', message: err.message };
+      printed = false;
+      console.error('[checkout] print failed (order still recorded)', err);
     }
+
+    syncManager.triggerNow().catch((err) => console.warn('[sync] trigger', err));
+
+    return {
+      ok: true,
+      orderNumber,
+      transactionId,
+      orderId: id,
+      paymentStatus: row.payment_status,
+      printed,
+    };
   });
 
   ipcMain.handle('orders:list', () => dbApi.listRecentOrders(db, 100));
@@ -213,15 +266,23 @@ app.whenReady().then(async () => {
   appConfig = loadAppConfig();
 
   terminal = await createPaymentTerminal(appConfig);
-  attachTerminalListeners(terminal);
   printer = await createReceiptPrinter(appConfig);
 
   syncManager = new SyncManager(db, appConfig);
   syncManager.on('status', (payload) => broadcast('sync:status', payload));
   syncManager.on('synced', (payload) => broadcast('sync:status', { ...payload, event: 'synced' }));
   syncManager.on('failed', (payload) => broadcast('sync:status', { ...payload, event: 'failed' }));
-  syncManager.setOnline(true);
+
+  // (3.3) Don't assume connectivity at boot. Probe the backend once; the
+  // renderer keeps this accurate afterwards via navigator.onLine events.
   syncManager.start();
+  syncManager.api
+    .healthCheck()
+    .then((ok) => {
+      syncManager.setOnline(ok);
+      if (ok) syncManager.triggerNow().catch(() => {});
+    })
+    .catch(() => syncManager.setOnline(false));
 
   setupIpc();
   await createMainWindow();

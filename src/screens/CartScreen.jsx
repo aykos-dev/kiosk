@@ -69,19 +69,19 @@ export function CartScreen({
                 </div>
               </div>
               <div className="flex shrink-0 flex-col justify-center pl-2">
-                <div className="flex h-10 w-[120px] items-center justify-between rounded-full bg-surface px-2">
+                <div className="flex h-11 w-[132px] items-center rounded-full bg-surface">
                   <button
                     type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-black/5"
+                    className="flex h-full flex-1 items-center justify-center rounded-l-full transition active:bg-black/5"
                     onClick={() => onDec(line.lineId)}
                     aria-label={t('common.decrease')}
                   >
                     <IconMinus className="h-5 w-5" />
                   </button>
-                  <span className="text-[15px] font-semibold">{line.qty}</span>
+                  <span className="min-w-[2ch] text-center text-[15px] font-semibold">{line.qty}</span>
                   <button
                     type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-black/5"
+                    className="flex h-full flex-1 items-center justify-center rounded-r-full transition active:bg-black/5"
                     onClick={() => onInc(line.lineId)}
                     aria-label={t('common.increase')}
                   >
@@ -145,7 +145,7 @@ export function CartScreen({
           type="button"
           disabled={cart.length === 0}
           onClick={onConfirm}
-          className="flex min-h-[56px] w-full items-center justify-center rounded-full bg-brand-green px-6 py-4 text-[18px] font-semibold text-white transition hover:bg-[#033a20] disabled:cursor-not-allowed disabled:bg-neutral-300"
+          className="flex min-h-[56px] w-full items-center justify-center rounded-full bg-brand-green px-6 py-4 text-[18px] font-semibold text-white transition hover:bg-brand-green-dark disabled:cursor-not-allowed disabled:bg-neutral-300"
         >
           {t('cart.confirm', { total: formatUzs(total) })}
         </button>

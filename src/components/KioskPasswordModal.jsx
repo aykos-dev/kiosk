@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useState } from 'react';
 import { useI18n } from '../hooks/useI18n.js';
 import { KIOSK_SETTINGS_PASSWORD } from '../lib/kioskSettingsAuth.js';
+import { backdropClose } from '../lib/backdropClose.js';
 
 /**
  * Must succeed before {@link KioskSettingsModal} is shown.
@@ -29,6 +30,7 @@ export function KioskPasswordModal({ open, onClose, onSuccess }) {
 
   return (
     <div
+      onClick={backdropClose(onClose)}
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 animate-kiosk-backdrop"
       role="dialog"
       aria-modal="true"
@@ -71,7 +73,7 @@ export function KioskPasswordModal({ open, onClose, onSuccess }) {
           <button
             type="button"
             onClick={submit}
-            className="min-h-[48px] flex-1 rounded-full bg-brand-green px-6 py-3 font-inter text-[16px] font-semibold text-white transition hover:bg-[#033a20] active:scale-[0.99]"
+            className="min-h-[48px] flex-1 rounded-full bg-brand-green px-6 py-3 font-inter text-[16px] font-semibold text-white transition hover:bg-brand-green-dark active:scale-[0.99]"
           >
             {t('settings.passwordSubmit')}
           </button>

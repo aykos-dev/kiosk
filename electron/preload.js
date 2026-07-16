@@ -16,9 +16,4 @@ contextBridge.exposeInMainWorld('kiosk', {
     ipcRenderer.on('sync:status', fn);
     return () => ipcRenderer.removeListener('sync:status', fn);
   },
-  onTerminalEvent: (callback) => {
-    const fn = (_e, data) => callback(data);
-    ipcRenderer.on('terminal:event', fn);
-    return () => ipcRenderer.removeListener('terminal:event', fn);
-  },
 });

@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { computeComboDelta, computeComboPizzaExtrasSum } from '../lib/comboPrice.js';
 
+/** Hidden-corner taps must land within this window to count toward the admin gesture. */
+const ADMIN_CORNER_TAP_WINDOW_MS = 2000;
+/** Number of rapid corner taps that opens the admin panel. */
+const ADMIN_CORNER_TAP_COUNT = 5;
+
 function newLineId() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
   return `ln_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -8,12 +13,12 @@ function newLineId() {
 
 function lineTotal(item) {
   if (item.kind === 'combo') {
-    return (item.basePrice + item.comboDelta) * item.qty;
+    return Math.round((item.basePrice + item.comboDelta) * item.qty);
   }
   if (item.kind === 'pizza') {
-    return item.unitPrice * item.qty;
+    return Math.round(item.unitPrice * item.qty);
   }
-  return item.price * item.qty;
+  return Math.round(item.price * item.qty);
 }
 
 export const useOrderStore = create((set, get) => ({
@@ -111,8 +116,9 @@ export const useOrderStore = create((set, get) => ({
         oldPrice: product.oldPrice,
         detailLine: product.combo?.description,
       };
-      const cleaned = state.cart.filter((c) => c.id !== product.id);
-      return { cart: [...cleaned, row] };
+      // Append as a distinct line — two differently-configured copies of the
+      // same combo must coexist. (An exact-match duplicate is merged above.)
+      return { cart: [...state.cart, row] };
     });
   },
 
@@ -188,7 +194,8 @@ export const useOrderStore = create((set, get) => ({
     if (line?.lineId) get().decItem(line.lineId);
   },
 
-  removeItem: (id) => set((state) => ({ cart: state.cart.filter((c) => c.id !== id) })),
+  /** Remove a single cart line by its unique lineId. */
+  removeItem: (lineId) => set((state) => ({ cart: state.cart.filter((c) => c.lineId !== lineId) })),
 
   clearCart: () => set({ cart: [] }),
 
@@ -212,9 +219,9 @@ export const useOrderStore = create((set, get) => ({
   registerCornerTap: () => {
     set((state) => {
       const now = Date.now();
-      const within = state.cornerLast && now - state.cornerLast < 2000;
+      const within = state.cornerLast && now - state.cornerLast < ADMIN_CORNER_TAP_WINDOW_MS;
       const taps = within ? state.cornerTaps + 1 : 1;
-      const adminOpen = taps >= 5 ? true : state.adminOpen;
+      const adminOpen = taps >= ADMIN_CORNER_TAP_COUNT ? true : state.adminOpen;
       return { cornerTaps: taps, cornerLast: now, adminOpen };
     });
   },

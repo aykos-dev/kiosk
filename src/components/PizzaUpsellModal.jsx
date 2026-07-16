@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { formatUzs } from "../lib/formatUzs.js";
 import { pickUpsellItem } from "../i18n/translate.js";
 import { useI18n } from "../hooks/useI18n.js";
+import { backdropClose } from "../lib/backdropClose.js";
 import { IconMinus, IconPlus } from "./icons.jsx";
+
+/** Per-card entrance animation offset so upsell cards cascade in. */
+const UPSELL_CARD_STAGGER_MS = 42;
 
 function IconClose({ className = "h-8 w-8" }) {
   return (
@@ -74,6 +78,7 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
 
   return (
     <div
+      onClick={backdropClose(onClose)}
       className="fixed inset-0 z-[70] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] motion-safe:animate-kiosk-backdrop"
       role="dialog"
       aria-modal="true"
@@ -113,7 +118,7 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
                   onBump={(d) => bump(item.id, d)}
                   t={t}
                   imageFit="cover"
-                  staggerMs={i * 42}
+                  staggerMs={i * UPSELL_CARD_STAGGER_MS}
                 />
               ))}
             </div>
@@ -138,7 +143,7 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
                   onBump={(d) => bump(item.id, d)}
                   t={t}
                   imageFit="contain"
-                  staggerMs={i * 42}
+                  staggerMs={i * UPSELL_CARD_STAGGER_MS}
                 />
               ))}
             </div>
@@ -194,34 +199,41 @@ function UpsellCard({
       <p className="text-center text-[18px] text-ink">
         {formatUzs(item.price)}
       </p>
-      <div className={`flex h-10 items-center gap-2 rounded-full bg-[#f7f7f7] px-1 ${qty > 0 ? "justify-between" : "justify-center"}`}>
-        {qty > 0 && (
-          <>
-            <button
-              type="button"
-              className="flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-black/5 active:scale-95"
-              onClick={() => onBump(-1)}
-              aria-label={t("common.decrease")}
-            >
-              <IconMinus className="h-5 w-5" />
-            </button>
-            <span
-              key={qty}
-              className="motion-safe:animate-kiosk-qty min-w-[2ch] text-center text-[15px] font-semibold tabular-nums"
-            >
-              {qty}
-            </span>
-          </>
-        )}
+      {qty > 0 ? (
+        <div className="flex h-11 items-center rounded-full bg-surface-soft">
+          <button
+            type="button"
+            className="flex h-full flex-1 items-center justify-center rounded-l-full transition active:bg-black/5"
+            onClick={() => onBump(-1)}
+            aria-label={t("common.decrease")}
+          >
+            <IconMinus className="h-5 w-5" />
+          </button>
+          <span
+            key={qty}
+            className="motion-safe:animate-kiosk-qty min-w-[2ch] text-center text-[15px] font-semibold tabular-nums"
+          >
+            {qty}
+          </span>
+          <button
+            type="button"
+            className="flex h-full flex-1 items-center justify-center rounded-r-full transition active:bg-black/5"
+            onClick={() => onBump(1)}
+            aria-label={t("common.increase")}
+          >
+            <IconPlus className="h-5 w-5" />
+          </button>
+        </div>
+      ) : (
         <button
           type="button"
-          className="flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-black/5 active:scale-95"
+          className="flex h-11 w-full items-center justify-center rounded-full bg-surface-soft transition active:bg-black/5"
           onClick={() => onBump(1)}
           aria-label={t("common.add")}
         >
           <IconPlus className="h-5 w-5" />
         </button>
-      </div>
+      )}
     </div>
   );
 }

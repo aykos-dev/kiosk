@@ -6,6 +6,7 @@ import { tEntity } from '../lib/tEntity.js';
 import { pickCrustName } from '../i18n/translate.js';
 import { computePizzaUnitPrice, formatPizzaDetailLine, initPizzaSelections } from '../lib/pizzaPrice.js';
 import { useI18n } from '../hooks/useI18n.js';
+import { backdropClose } from '../lib/backdropClose.js';
 import { PizzaCustomizeForm } from './PizzaCustomizeForm.jsx';
 
 function IconClose({ className = 'h-8 w-8' }) {
@@ -91,6 +92,7 @@ export function PizzaDetailsModal({ product, template, onClose, onContinue, badg
 
   return (
     <div
+      onClick={backdropClose(onClose)}
       className="fixed inset-0 z-[60] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)]"
       role="dialog"
       aria-modal="true"
@@ -129,7 +131,7 @@ export function PizzaDetailsModal({ product, template, onClose, onContinue, badg
           <button
             type="button"
             onClick={handleContinue}
-            className="w-full rounded-full bg-brand-green py-4 text-[18px] font-semibold text-white shadow-md transition hover:bg-[#033a20]"
+            className="w-full rounded-full bg-brand-green py-4 text-[18px] font-semibold text-white shadow-md transition hover:bg-brand-green-dark"
           >
             {t('common.continue')}
           </button>

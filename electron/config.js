@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { app } from 'electron';
+import { DEFAULT_API_BASE_URL, API_ORDER_TIMEOUT_MS } from '../src/lib/apiDefaults.js';
 
 const defaults = {
   mode: 'development',
@@ -27,8 +28,8 @@ const defaults = {
     },
   },
   api: {
-    baseUrl: 'https://io.bellissimo.uz/api',
-    timeout: 5000,
+    baseUrl: DEFAULT_API_BASE_URL,
+    timeout: API_ORDER_TIMEOUT_MS,
     retryAttempts: 3,
   },
 };
@@ -75,13 +76,33 @@ export function loadAppConfig() {
     }
   }
 
+  const isProduction = app.isPackaged || merged.mode === 'production';
+
   let useMockTerminal = merged.hardware?.paymentTerminal?.useMock;
   if (useMockTerminal === undefined) {
     useMockTerminal = process.platform === 'darwin' || merged.mode === 'development';
   }
+  // (5.2) A mock terminal approves every payment for free. Never let one run in
+  // a production build by accident — it must be explicitly opted into.
+  if (isProduction && useMockTerminal) {
+    const allowMock = merged.hardware?.paymentTerminal?.allowMockInProduction === true;
+    if (!allowMock) {
+      console.warn(
+        '[kiosk] REFUSING mock payment terminal in a production build (it would approve payments for free). ' +
+          'Forcing the real terminal. Set hardware.paymentTerminal.allowMockInProduction=true to override for testing.',
+      );
+      useMockTerminal = false;
+    } else {
+      console.warn('[kiosk] WARNING: mock payment terminal explicitly enabled in production.');
+    }
+  }
+
   let useMockPrinter = merged.hardware?.printer?.useMock;
   if (useMockPrinter === undefined) {
     useMockPrinter = process.platform === 'darwin' || merged.mode === 'development';
+  }
+  if (isProduction && useMockPrinter) {
+    console.warn('[kiosk] WARNING: mock receipt printer active in a production build.');
   }
 
   merged.hardware = merged.hardware || {};
@@ -102,4 +123,32 @@ export function loadAppConfig() {
 
 export function invalidateConfigCache() {
   cached = undefined;
+}
+
+/**
+ * Single source of truth for the kiosk BrowserWindow geometry.
+ * Reads the merged config (which always carries the `defaults` above), so
+ * neither main-app.js nor config.json need to re-hard-code fallback sizes.
+ * @param {ReturnType<typeof loadAppConfig>} [appConfig]
+ */
+export function getWindowOptions(appConfig = loadAppConfig()) {
+  const k = appConfig.kiosk || {};
+  const num = (v, fallback) => (Number.isFinite(Number(v)) ? Number(v) : fallback);
+  const width = num(k.windowWidth, defaults.kiosk.windowWidth);
+  const height = num(k.windowHeight, defaults.kiosk.windowHeight);
+  const fullscreen = k.fullscreen !== false;
+  // A production kiosk runs on a fixed portrait panel and must not be resized
+  // into a layout the UI was never designed for. Only allow resizing while
+  // developing with fullscreen off.
+  const resizable = !fullscreen && appConfig.mode === 'development';
+  return {
+    width,
+    height,
+    // When the window is locked, min === fixed size; when resizing is allowed
+    // for dev convenience, fall back to the configured minimums.
+    minWidth: resizable ? num(k.minWindowWidth, defaults.kiosk.minWindowWidth) : width,
+    minHeight: resizable ? num(k.minWindowHeight, defaults.kiosk.minWindowHeight) : height,
+    fullscreen,
+    resizable,
+  };
 }

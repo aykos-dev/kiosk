@@ -5,6 +5,15 @@ const LISTENER_OPTS = { passive: true };
 /** Time with no input before the idle warning appears (5 minutes). Override via `kiosk.inactivityTimeout` in config when using Electron. */
 export const DEFAULT_IDLE_SESSION_MS = 5 * 60 * 1000;
 
+/** Default seconds shown in the "still there?" countdown before the session resets. */
+export const DEFAULT_IDLE_COUNTDOWN_SECONDS = 15;
+
+/** Countdown ticks once per second. */
+const COUNTDOWN_TICK_MS = 1000;
+
+/** Ignore repeat activity events fired within this window (coalesce move/scroll floods). */
+const ACTIVITY_THROTTLE_MS = 400;
+
 /**
  * After `idleMs` without activity, opens warning phase with `countdownSeconds` countdown,
  * then calls `onExpire` (e.g. resetFlow → welcome). Activity restarts the idle timer.
@@ -12,7 +21,7 @@ export const DEFAULT_IDLE_SESSION_MS = 5 * 60 * 1000;
  */
 export function useIdleSessionWarning({
   idleMs,
-  countdownSeconds = 15,
+  countdownSeconds = DEFAULT_IDLE_COUNTDOWN_SECONDS,
   onExpire,
   enabled,
 }) {
@@ -48,7 +57,7 @@ export function useIdleSessionWarning({
         setWarningOpen(false);
         onExpireRef.current?.();
       }
-    }, 1000);
+    }, COUNTDOWN_TICK_MS);
   }, [countdownSeconds]);
 
   const scheduleIdleTimer = useCallback(() => {
@@ -67,7 +76,7 @@ export function useIdleSessionWarning({
   const lastThrottleRef = useRef(0);
   const onActivity = useCallback(() => {
     const now = Date.now();
-    if (now - lastThrottleRef.current < 400) return;
+    if (now - lastThrottleRef.current < ACTIVITY_THROTTLE_MS) return;
     lastThrottleRef.current = now;
     scheduleIdleTimer();
   }, [scheduleIdleTimer]);
