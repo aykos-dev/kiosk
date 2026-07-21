@@ -1,0 +1,54 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm ci runs the postinstall hook (electron-rebuild -f -w better-sqlite3),
+      # which compiles the native module against Electron for win32-x64 using the
+      # MSVC toolchain preinstalled on windows-latest.
+      - name: Install dependencies
+        run: npm ci
+
+      # generate:win-assets (.ico + install gif) then electron-forge make --platform=win32.
+      - name: Build Windows installer
+        run: npm run build:win
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bellissimo-kiosk-windows
+          path: |
+            out/make/**/*.exe
+            out/make/**/*.nupkg
+            out/make/**/RELEASES
+          if-no-files-found: error
+
+      # On a version tag, publish the installer to a GitHub Release.
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            out/make/**/*.exe
+            out/make/**/*.nupkg
+            out/make/**/RELEASES
