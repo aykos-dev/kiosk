@@ -3,11 +3,19 @@ name: Build Windows Installer
 on:
   push:
     branches: [main]
-    tags: ['v*']
+    paths-ignore:
+      - '**.md'
+      - '.github/**.md'
   workflow_dispatch:
 
+# Needed to push tags and publish releases with the built-in GITHUB_TOKEN.
 permissions:
   contents: write
+
+# Only one build at a time so version numbers can't race.
+concurrency:
+  group: build-windows
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -16,6 +24,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need all tags to compute the next version
+          fetch-tags: true
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -23,32 +34,84 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Auto-increment the version: take the highest existing v* tag (falling back
+      # to package.json) and bump the patch. No manual version editing required.
+      - name: Compute next version
+        id: ver
+        shell: bash
+        run: |
+          git fetch --tags --force
+          LATEST=$(git tag -l 'v*.*.*' | sed 's/^v//' | sort -V | tail -n1)
+          if [ -z "$LATEST" ]; then
+            LATEST=$(node -p "require('./package.json').version")
+            # No tags yet: bump from the package.json version.
+          fi
+          MAJOR=$(echo "$LATEST" | cut -d. -f1)
+          MINOR=$(echo "$LATEST" | cut -d. -f2)
+          PATCH=$(echo "$LATEST" | cut -d. -f3)
+          NEW="$MAJOR.$MINOR.$((PATCH + 1))"
+          echo "version=$NEW" >> "$GITHUB_OUTPUT"
+          echo "tag=v$NEW" >> "$GITHUB_OUTPUT"
+          echo "Next version: $NEW"
+
+      - name: Stamp version into package.json
+        shell: bash
+        run: npm version "${{ steps.ver.outputs.version }}" --no-git-tag-version --allow-same-version
+
       # npm ci runs the postinstall hook (electron-rebuild -f -w better-sqlite3),
-      # which compiles the native module against Electron for win32-x64 using the
-      # MSVC toolchain preinstalled on windows-latest.
+      # compiling the native module against Electron for win32-x64 using the MSVC
+      # toolchain preinstalled on windows-latest.
       - name: Install dependencies
         run: npm ci
 
+      # If code-signing secrets are configured, decode the cert to a file so
+      # forge.config.js picks it up. Skipped (unsigned build) when absent.
+      - name: Prepare code-signing certificate
+        id: signing
+        if: ${{ env.WINDOWS_CERT_BASE64 != '' }}
+        shell: bash
+        env:
+          WINDOWS_CERT_BASE64: ${{ secrets.WINDOWS_CERT_BASE64 }}
+        run: |
+          echo "$WINDOWS_CERT_BASE64" | base64 --decode > "$RUNNER_TEMP/cert.pfx"
+          echo "cert_file=$RUNNER_TEMP/cert.pfx" >> "$GITHUB_OUTPUT"
+
       # generate:win-assets (.ico + install gif) then electron-forge make --platform=win32.
       - name: Build Windows installer
+        shell: bash
+        env:
+          WINDOWS_CERT_FILE: ${{ steps.signing.outputs.cert_file }}
+          WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
         run: npm run build:win
 
-      - name: Upload installer artifact
+      - name: Collect installer files
+        id: collect
+        shell: bash
+        run: |
+          mkdir -p release
+          # Squirrel emits the Setup .exe, the *-full.nupkg, and RELEASES.
+          find out/make -type f \( -name '*.exe' -o -name '*.nupkg' -o -name 'RELEASES' \) -print -exec cp {} release/ \;
+          # Give the setup a stable, version-tagged name for the release page.
+          SETUP=$(find release -maxdepth 1 -name '*.exe' | head -n1)
+          if [ -n "$SETUP" ]; then
+            cp "$SETUP" "release/bellissimo-kiosk-${{ steps.ver.outputs.tag }}-Setup.exe"
+          fi
+          ls -la release
+
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bellissimo-kiosk-windows
-          path: |
-            out/make/**/*.exe
-            out/make/**/*.nupkg
-            out/make/**/RELEASES
+          name: bellissimo-kiosk-${{ steps.ver.outputs.tag }}
+          path: release/**
           if-no-files-found: error
 
-      # On a version tag, publish the installer to a GitHub Release.
+      # Publishes a GitHub Release per version. The Releases page becomes the
+      # running "folder" of every build; the tag is created automatically here.
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            out/make/**/*.exe
-            out/make/**/*.nupkg
-            out/make/**/RELEASES
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: Bellissimo Kiosk ${{ steps.ver.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          files: release/**

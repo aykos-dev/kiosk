@@ -7,6 +7,18 @@ const setupIco = path.join(__dirname, 'assets/images/bellissimo-icon.ico');
 const installGif = path.join(__dirname, 'assets/images/install-loading.gif');
 
 /**
+ * Windows code-signing config, only when a certificate is provided via env
+ * (see .github/workflows/build-windows.yml). Undefined => unsigned build.
+ * Requires WINDOWS_CERT_FILE (path to .pfx) and WINDOWS_CERT_PASSWORD.
+ */
+const windowsSign = process.env.WINDOWS_CERT_FILE
+  ? {
+      certificateFile: process.env.WINDOWS_CERT_FILE,
+      certificatePassword: process.env.WINDOWS_CERT_PASSWORD,
+    }
+  : undefined;
+
+/**
  * @electron-forge/plugin-vite normally ignores everything except `/.vite`, which strips
  * `node_modules`. Main-process externals (better-sqlite3, electron-squirrel-startup) must
  * ship in the app or startup throws before any window appears.
@@ -41,6 +53,8 @@ module.exports = {
     // Windows .exe / macOS .icns / Linux — pass path without extension where supported
     icon: iconBase,
     ignore: packagerIgnore,
+    // Signs the packaged app executables (no-op when unset).
+    windowsSign,
   },
   rebuildConfig: {},
   makers: [
@@ -51,6 +65,8 @@ module.exports = {
         loadingGif: installGif,
         // Start menu / shortcut display name (search "Bellissimo")
         title: 'Bellissimo Kiosk',
+        // Signs the generated Setup.exe (no-op when unset).
+        windowsSign,
       },
     },
     {
