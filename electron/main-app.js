@@ -265,8 +265,20 @@ app.whenReady().then(async () => {
   db = dbApi.openDatabase(path.join(userData, 'kiosk.db'));
   appConfig = loadAppConfig();
 
-  terminal = await createPaymentTerminal(appConfig);
-  printer = await createReceiptPrinter(appConfig);
+  // Hardware is best-effort: a terminal or printer that fails to initialize
+  // must never stop the kiosk UI (and thus online ordering) from booting.
+  try {
+    terminal = await createPaymentTerminal(appConfig);
+  } catch (err) {
+    console.error('[main-app] payment terminal init failed; continuing without it', err);
+    terminal = null;
+  }
+  try {
+    printer = await createReceiptPrinter(appConfig);
+  } catch (err) {
+    console.error('[main-app] printer init failed; continuing without it', err);
+    printer = null;
+  }
 
   syncManager = new SyncManager(db, appConfig);
   syncManager.on('status', (payload) => broadcast('sync:status', payload));

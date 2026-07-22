@@ -19,6 +19,12 @@ const defaults = {
       port: 'COM3',
       baudRate: 9600,
       useMock: true,
+      // (TEMP until Phase 4) The real WindowsSerialPaymentTerminal is still an
+      // unimplemented stub that throws on initialize(), so a packaged build has
+      // no working terminal. Allow the mock in packaged/production builds so the
+      // app can boot and online ordering can be tested end-to-end. REMOVE this
+      // (or set false) once the real serial terminal is implemented.
+      allowMockInProduction: true,
     },
     printer: {
       enabled: true,

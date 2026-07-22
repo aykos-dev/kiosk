@@ -13,7 +13,8 @@
       "enabled": true,
       "port": "COM3",
       "baudRate": 9600,
-      "useMock": true
+      "useMock": true,
+      "allowMockInProduction": true
     },
     "printer": {
       "enabled": true,
