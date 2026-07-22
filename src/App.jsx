@@ -15,7 +15,6 @@ import { LanguageScreen } from './screens/LanguageScreen.jsx';
 import { OrderConfirm } from './components/OrderConfirm.jsx';
 import { PaymentMethodScreen } from './screens/PaymentMethodScreen.jsx';
 import { PaymentProcessingScreen } from './components/PaymentProcessingScreen.jsx';
-import { PaymentQrScreen } from './components/PaymentQrScreen.jsx';
 import { KioskPasswordModal } from './components/KioskPasswordModal.jsx';
 import { KioskSettingsModal } from './components/KioskSettingsModal.jsx';
 import { WelcomeScreen } from './screens/WelcomeScreen.jsx';
@@ -30,7 +29,7 @@ import {
 } from './hooks/useIdleSessionWarning.js';
 import { useComboPizzaFlow } from './hooks/useComboPizzaFlow.js';
 import { useI18n } from './hooks/useI18n.js';
-import { useKioskPayment } from './hooks/useKioskPayment.js';
+import { useTableOrderCheckout } from './hooks/useTableOrderCheckout.js';
 import { useMenuCatalog } from './hooks/useMenuCatalog.js';
 import { useOrderStore } from './store/orderStore.js';
 
@@ -128,7 +127,7 @@ export default function App() {
     return staticPizzaTemplate;
   }, [comboPizza.pizzaProduct, locale]);
 
-  const payment = useKioskPayment({
+  const payment = useTableOrderCheckout({
     cart,
     total,
     clearCart,
@@ -137,6 +136,7 @@ export default function App() {
     setScreen,
     screen,
     t,
+    locale,
   });
 
   useAppShellEffects({ locale });
@@ -284,14 +284,9 @@ export default function App() {
         <PaymentMethodScreen
           total={total}
           onBack={payment.onPaymentBack}
-          onSelectQr={payment.onSelectQr}
-          onSelectHumo={payment.onSelectHumo}
-          onSelectCash={payment.onSelectCash}
+          onSelect={payment.submit}
+          error={lastError}
         />
-      )}
-
-      {screen === 'payment' && payment.paymentStep === 'qr' && (
-        <PaymentQrScreen onBack={payment.onPaymentBack} qrUrl={import.meta.env.VITE_PAYMENT_QR_URL} />
       )}
 
       {screen === 'payment' && payment.paymentStep === 'processing' && (

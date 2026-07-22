@@ -62,6 +62,7 @@ export const useOrderStore = create((set, get) => ({
       const row = {
         lineId: newLineId(),
         id: product.id,
+        productId: product.productId ?? product.id,
         name: product.name,
         price: product.price,
         qty: 1,
@@ -111,6 +112,8 @@ export const useOrderStore = create((set, get) => ({
         lineTotal: unit,
         image: product.image || '/menu-items/placeholder.svg',
         kind: 'combo',
+        // iiko combo source id for the order's combos[] entry.
+        sourceId: product.sourceActionId ?? product.id,
         comboSelections,
         comboPizzaBySlot,
         oldPrice: product.oldPrice,
@@ -122,7 +125,10 @@ export const useOrderStore = create((set, get) => ({
     });
   },
 
-  addPizzaItem: (product, { unitPrice, pizzaConfig, detailLine }) => {
+  addPizzaItem: (
+    product,
+    { unitPrice, pizzaConfig, detailLine, orderProductId, orderBasePrice, orderModifiers },
+  ) => {
     set((state) => {
       const row = {
         lineId: newLineId(),
@@ -136,6 +142,10 @@ export const useOrderStore = create((set, get) => ({
         kind: 'pizza',
         pizzaConfig,
         detailLine,
+        // iiko order data captured at add-time (base dish + modifier groups).
+        orderProductId: orderProductId ?? product.productId ?? product.id,
+        orderBasePrice: orderBasePrice ?? unitPrice,
+        orderModifiers: Array.isArray(orderModifiers) ? orderModifiers : [],
         oldPrice: product.oldPrice,
       };
       return { cart: [...state.cart, row] };

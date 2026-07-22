@@ -45,13 +45,7 @@ function PaymentLogo({ kind, className = '' }) {
 /**
  * Payment method selection (Figma 4287:26388). Payment types come from the default org via organizations API.
  */
-export function PaymentMethodScreen({
-  total,
-  onBack,
-  onSelectQr,
-  onSelectHumo,
-  onSelectCash = onSelectHumo,
-}) {
+export function PaymentMethodScreen({ total, onBack, onSelect, error }) {
   const { t, locale } = useI18n();
   const cityId = useKioskSettingsStore((s) => s.cityId);
   const organizationId = useKioskSettingsStore((s) => s.organizationId);
@@ -98,11 +92,20 @@ export function PaymentMethodScreen({
         <p className="text-center font-product text-[32px] font-semibold leading-[48px] text-ink">{t('payment.howPay')}</p>
       </div>
 
+      {error && (
+        <div
+          role="alert"
+          className="mx-auto mt-4 w-full max-w-[416px] rounded-2xl bg-red-50 px-5 py-4 text-center font-inter text-[18px] font-medium leading-6 text-red-600"
+        >
+          {error}
+        </div>
+      )}
+
       <div className="mx-auto mt-8 flex w-full max-w-[348px] flex-col gap-5 px-6">
         {qrTypes.length > 0 && (
           <button
             type="button"
-            onClick={onSelectQr}
+            onClick={() => onSelect(qrTypes[0])}
             className="flex flex-col items-center gap-5 rounded-[24px] bg-surface px-6 py-5 text-center transition hover:bg-neutral-200/80"
           >
             <div className="flex flex-wrap items-center justify-center gap-2">
@@ -124,12 +127,11 @@ export function PaymentMethodScreen({
           const code = pt?.object?.code;
           const kind = paymentVisualKind(code);
           const label = pickPaymentTypeLabel(pt, locale);
-          const isCash = (code || '').toUpperCase() === 'CASH';
           return (
             <button
               key={pt.id ?? code}
               type="button"
-              onClick={isCash ? onSelectCash : onSelectHumo}
+              onClick={() => onSelect(pt)}
               className="flex flex-col items-center gap-5 rounded-[24px] bg-surface px-6 py-5 text-center transition hover:bg-neutral-200/80"
             >
               <p className="font-inter text-[20px] font-medium leading-7 tracking-[-0.15px] text-ink">{label}</p>

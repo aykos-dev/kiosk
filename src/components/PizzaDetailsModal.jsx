@@ -5,6 +5,7 @@ import { resolveProductImage } from '../lib/menuProduct.js';
 import { tEntity } from '../lib/tEntity.js';
 import { pickCrustName } from '../i18n/translate.js';
 import { computePizzaUnitPrice, formatPizzaDetailLine, initPizzaSelections } from '../lib/pizzaPrice.js';
+import { buildPizzaOrderModifiers } from '../lib/tableOrder.js';
 import { useI18n } from '../hooks/useI18n.js';
 import { backdropClose } from '../lib/backdropClose.js';
 import { PizzaCustomizeForm } from './PizzaCustomizeForm.jsx';
@@ -87,6 +88,10 @@ export function PizzaDetailsModal({ product, template, onClose, onContinue, badg
       unitPrice,
       detailLine,
       lineProduct,
+      // iiko order data derived from the raw dish (carries modifier group ids).
+      orderProductId: lineProduct.productId ?? lineProduct.id,
+      orderBasePrice: Number(lineProduct.price) || 0,
+      orderModifiers: buildPizzaOrderModifiers(lineProduct, sel),
     });
   }
 

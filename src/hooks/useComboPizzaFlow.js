@@ -114,6 +114,9 @@ export function useComboPizzaFlow({
           unitPrice: pizzaDraft.unitPrice,
           pizzaConfig: pizzaDraft.selections,
           detailLine: pizzaDraft.detailLine,
+          orderProductId: pizzaDraft.orderProductId,
+          orderBasePrice: pizzaDraft.orderBasePrice,
+          orderModifiers: pizzaDraft.orderModifiers,
         },
       );
       for (const [id, qty] of Object.entries(counts)) {
@@ -123,6 +126,8 @@ export function useComboPizzaFlow({
         if (!u) continue;
         const productLike = {
           id: `upsell-${id}`,
+          // Real iiko product id (the upsell key) for the order payload.
+          productId: id,
           name: pickUpsellItem(locale, u).name,
           price: u.price,
           image: u.image,
