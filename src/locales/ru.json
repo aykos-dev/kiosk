@@ -79,7 +79,8 @@
     "howPay": "Как будем оплачивать?",
     "qrLine1": "rahmat",
     "qrLine2": "Онлайн-оплата по QR",
-    "humo": "Оплата банковской картой (Humo)",
+    "humo": "Humo",
+    "uzcard": "Uzcard",
     "amountLabel": "К оплате"
   },
   "paymentQr": {
@@ -149,6 +150,7 @@
     "kioskBridge": "Мост киоска недоступен",
     "paymentDeclined": "Платёж отклонён. Попробуйте снова.",
     "paymentFailed": "Не удалось завершить оплату.",
+    "paymentCapturedNoOrder": "Оплата прошла, но заказ не зарегистрирован. Обратитесь к персоналу.",
     "generic": "Ошибка"
   },
   "recommendations": {

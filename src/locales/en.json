@@ -79,7 +79,8 @@
     "howPay": "How would you like to pay?",
     "qrLine1": "rahmat",
     "qrLine2": "Online payment via QR",
-    "humo": "Card payment (Humo)",
+    "humo": "Humo",
+    "uzcard": "Uzcard",
     "amountLabel": "Amount due"
   },
   "paymentQr": {
@@ -149,6 +150,7 @@
     "kioskBridge": "Kiosk bridge is not available",
     "paymentDeclined": "Payment declined. Please try again.",
     "paymentFailed": "Could not complete payment.",
+    "paymentCapturedNoOrder": "Payment was taken but the order could not be registered. Please call staff.",
     "generic": "Error"
   },
   "recommendations": {

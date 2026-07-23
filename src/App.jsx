@@ -8,6 +8,7 @@ import { menuQuery } from './api/menu.js';
 import { AdminPanel } from './components/AdminPanel.jsx';
 import { AppShell } from './components/AppShell.jsx';
 import { BackWithCartModal } from './components/BackWithCartModal.jsx';
+import { HardwareErrorToast } from './components/HardwareErrorToast.jsx';
 import { IdleSessionModal } from './components/IdleSessionModal.jsx';
 import { CartScreen } from './screens/CartScreen.jsx';
 import { KioskMenuScreen } from './screens/KioskMenuScreen.jsx';
@@ -331,6 +332,8 @@ export default function App() {
         onCancel={() => setBackCartModalOpen(false)}
         onConfirm={handleConfirmBackWithCart}
       />
+
+      <HardwareErrorToast />
     </AppShell>
   );
 }

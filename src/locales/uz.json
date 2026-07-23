@@ -79,7 +79,8 @@
     "howPay": "Qanday qilib to'laymiz?",
     "qrLine1": "rahmat",
     "qrLine2": "QR orqali onlayn to'lov",
-    "humo": "Bank kartasi orqali to'lov (Humo)",
+    "humo": "Humo",
+    "uzcard": "Uzcard",
     "amountLabel": "To'lov uchun"
   },
   "paymentQr": {
@@ -149,6 +150,7 @@
     "kioskBridge": "Kiosk bridge mavjud emas",
     "paymentDeclined": "To'lov rad etildi. Qayta urinib ko'ring.",
     "paymentFailed": "To'lovni yakunlab bo'lmadi.",
+    "paymentCapturedNoOrder": "To'lov amalga oshdi, lekin buyurtma ro'yxatga olinmadi. Xodimga murojaat qiling.",
     "generic": "Xatolik"
   },
   "recommendations": {

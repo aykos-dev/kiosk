@@ -10,6 +10,7 @@ function delay(ms) {
 export class MockPaymentTerminal extends EventEmitter {
   constructor(options = {}) {
     super();
+    this.kind = options.kind || 'card';
     this.options = {
       minDelayMs: 2000,
       maxDelayMs: 3200,

@@ -14,7 +14,7 @@
     "generate:win-assets": "node scripts/generate-windows-assets.js",
     "build:win": "npm run generate:win-assets && electron-forge make --platform=win32",
     "publish": "electron-forge publish",
-    "postinstall": "electron-rebuild -f -w better-sqlite3",
+    "postinstall": "electron-rebuild -f -o better-sqlite3,@serialport/bindings-cpp,usb",
     "test": "node -e \"console.log('Add vitest/jest for unit tests')\"",
     "lint": "echo \"No linting configured\""
   },
@@ -56,6 +56,8 @@
     "qrcode": "^1.5.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "serialport": "^12.0.0",
+    "usb": "^2.14.0",
     "uuid": "^13.0.0",
     "zustand": "^5.0.12"
   }

@@ -1,20 +1,21 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Banknote } from 'lucide-react';
+import { Banknote, CreditCard } from 'lucide-react';
 import { formatUzs } from '../lib/formatUzs.js';
 import { useI18n } from '../hooks/useI18n.js';
 import { IconArrowLeft } from '../components/icons.jsx';
 import { getOrganizationsQueryOptions } from '../api/organizations.js';
 import { useKioskSettingsStore } from '../store/kioskSettingsStore.js';
 import { getPaymentTypesForOrganization } from '../lib/organizationPaymentTypes.js';
-import { paymentVisualKind, pickPaymentTypeLabel } from '../lib/paymentTypeVisual.js';
+import { paymentVisualKind, pickPaymentTypeLabel, isCardKind, CARD_KINDS } from '../lib/paymentTypeVisual.js';
 
 /** Fallback display labels when the terminal payment type has no localized label. */
 const KIND_LABEL = {
   payme: 'Payme',
   click: 'Click',
   uzum: 'Uzum',
-  humo: 'Humo / UzCard',
+  humo: 'Humo',
+  uzcard: 'Uzcard',
   cash: 'Naqd',
 };
 
@@ -36,6 +37,9 @@ function PaymentLogo({ kind, className = '' }) {
   }
   if (kind === 'cash') {
     return <Banknote className={`h-14 w-14 shrink-0 text-brand-green ${className}`} strokeWidth={1.5} aria-hidden />;
+  }
+  if (kind === 'uzcard') {
+    return <CreditCard className={`h-14 w-14 shrink-0 text-[#0a3d91] ${className}`} strokeWidth={1.5} aria-hidden />;
   }
   return (
     <img
@@ -59,6 +63,24 @@ export function PaymentMethodScreen({ total, onBack, onSelect, error }) {
     () => getPaymentTypesForOrganization(organizations, organizationId),
     [organizations, organizationId],
   );
+
+  // The API lumps all bank cards into one "card" type, but a kiosk has two
+  // physical terminals (Humo=Sunmi P3, Uzcard=PAX A35). So we hide the single
+  // API card type and render two static card buttons instead — each carries
+  // the underlying API type (for backend order registration) plus a cardKind
+  // that tells the checkout which terminal to charge.
+  const { otherTypes, cardApiType } = useMemo(() => {
+    const other = [];
+    let card = null;
+    for (const pt of paymentTypes) {
+      if (isCardKind(paymentVisualKind(pt?.object?.code))) {
+        card = card || pt;
+      } else {
+        other.push(pt);
+      }
+    }
+    return { otherTypes: other, cardApiType: card };
+  }, [paymentTypes]);
 
   return (
     <div className="relative flex min-h-screen flex-col bg-white font-sans pb-10">
@@ -92,7 +114,7 @@ export function PaymentMethodScreen({ total, onBack, onSelect, error }) {
       )}
 
       <div className="mx-auto mt-8 flex w-full max-w-[416px] flex-col gap-4 px-6">
-        {paymentTypes.map((pt) => {
+        {otherTypes.map((pt) => {
           const code = pt?.object?.code;
           const kind = paymentVisualKind(code);
           const label = pickPaymentTypeLabel(pt, locale) || KIND_LABEL[kind] || code || '';
@@ -112,6 +134,25 @@ export function PaymentMethodScreen({ total, onBack, onSelect, error }) {
             </button>
           );
         })}
+
+        {/* Two static card buttons, each routed to its own physical terminal. */}
+        {CARD_KINDS.map((cardKind) => (
+          <button
+            key={cardKind}
+            type="button"
+            onClick={() =>
+              onSelect({ static: true, cardKind, apiPaymentType: cardApiType, object: cardApiType?.object })
+            }
+            className="flex items-center gap-5 rounded-[24px] bg-surface px-6 py-5 text-left transition hover:bg-neutral-200/80 active:scale-[0.99]"
+          >
+            <div className="flex h-14 shrink-0 items-center justify-center">
+              <PaymentLogo kind={cardKind} />
+            </div>
+            <span className="flex-1 font-inter text-[20px] font-medium leading-7 tracking-[-0.15px] text-ink">
+              {t(`payment.${cardKind}`) || KIND_LABEL[cardKind]}
+            </span>
+          </button>
+        ))}
       </div>
 
       <div className="mx-auto mt-auto w-full max-w-[416px] px-6 pt-10 text-center">

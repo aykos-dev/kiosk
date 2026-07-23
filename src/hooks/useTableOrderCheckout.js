@@ -66,7 +66,9 @@ export function useTableOrderCheckout({
   );
 
   /**
-   * @param {object} paymentType - selected entry from terminal.paymentTypes
+   * @param {object} paymentType - selected entry from terminal.paymentTypes, or
+   *   a static card descriptor `{ static, cardKind, apiPaymentType }` for the
+   *   Humo/Uzcard buttons (which charge a physical terminal via Electron IPC).
    */
   const submit = useCallback(
     async (paymentType) => {
@@ -76,18 +78,47 @@ export function useTableOrderCheckout({
       setLastError(null);
       setPaymentStep('processing');
 
+      const kiosk = typeof window !== 'undefined' ? window.kiosk : undefined;
+      const cardKind = paymentType?.static ? paymentType.cardKind : null;
+
       try {
+        // Card (Humo/Uzcard): charge the matching physical terminal FIRST, so we
+        // only ever register a paid order. No money moves until the terminal
+        // approves; a decline/error returns the guest to the picker.
+        let cardTxn = null;
+        if (cardKind) {
+          if (!kiosk?.chargeCard) {
+            setLastError(t('errors.kioskBridge') || t('errors.generic'));
+            setPaymentStep('select');
+            return;
+          }
+          const charge = await kiosk.chargeCard(cardKind, total);
+          if (charge?.status !== 'approved') {
+            setLastError(
+              charge?.status === 'declined'
+                ? t('errors.paymentDeclined')
+                : charge?.message || t('errors.paymentFailed'),
+            );
+            setPaymentStep('select');
+            return;
+          }
+          cardTxn = charge.transactionId || null;
+        }
+
         const { organizationId: orgId, terminalId } = resolveKioskOrderTarget(
           organizations,
           organizationId,
         );
+        // For static card buttons, register the order under the API's card
+        // payment type (the backend doesn't distinguish Humo vs Uzcard).
+        const orderPaymentType = cardKind ? paymentType.apiPaymentType || paymentType : paymentType;
         const payload = buildTableOrderPayload({
           cart,
           clientCode: generateClientCode(),
           organizationId: orgId,
           terminalId,
           total,
-          payment: buildOrderPayment(paymentType, total),
+          payment: buildOrderPayment(orderPaymentType, total),
           tableNumber: null,
           comment: null,
           version: pkg.version,
@@ -96,7 +127,27 @@ export function useTableOrderCheckout({
         const res = await createTableOrder(payload);
 
         if (res?.success) {
-          setOrderNumber(extractOrderNumber(res));
+          const orderNo = extractOrderNumber(res);
+          setOrderNumber(orderNo);
+          // Print a receipt for EVERY successful order (card, cash, QR/online).
+          // Best-effort: a printer fault is recorded in main and shown via the
+          // hardware-error toast; it never blocks the order.
+          if (kiosk?.printReceipt) {
+            kiosk
+              .printReceipt({
+                orderNumber: orderNo,
+                items: cart.map((i) => ({
+                  name: i.name,
+                  qty: i.qty || 1,
+                  price: i.price,
+                  lineTotal: i.lineTotal ?? (i.price || 0) * (i.qty || 1),
+                })),
+                total,
+                transactionId: cardTxn,
+                paymentMethod: cardKind || paymentVisualKind(paymentType?.object?.code),
+              })
+              .catch(() => {});
+          }
           clearCart();
           const url = extractPaymentUrl(res);
           if (url) {
@@ -108,6 +159,28 @@ export function useTableOrderCheckout({
             setScreen('success');
             setPaymentStep('select');
           }
+        } else if (cardTxn) {
+          // Money was captured on the terminal but the backend rejected the
+          // order. Do NOT bounce as if nothing happened — print a proof receipt
+          // with the txn id and tell the guest to get staff (manual reconcile).
+          if (kiosk?.printReceipt) {
+            kiosk
+              .printReceipt({
+                orderNumber: '—',
+                items: cart.map((i) => ({
+                  name: i.name,
+                  qty: i.qty || 1,
+                  price: i.price,
+                  lineTotal: i.lineTotal ?? (i.price || 0) * (i.qty || 1),
+                })),
+                total,
+                transactionId: cardTxn,
+                paymentMethod: cardKind,
+              })
+              .catch(() => {});
+          }
+          setLastError(t('errors.paymentCapturedNoOrder'));
+          setPaymentStep('select');
         } else {
           const reason =
             localizedMessage(res?.reasonMessage?.description) ||

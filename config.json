@@ -9,23 +9,33 @@
     "minWindowHeight": 900
   },
   "hardware": {
-    "paymentTerminal": {
-      "enabled": true,
-      "port": "COM3",
-      "baudRate": 9600,
-      "useMock": true,
-      "allowMockInProduction": true
+    "paymentTerminals": {
+      "humo": {
+        "enabled": true,
+        "port": "COM3",
+        "baudRate": 9600,
+        "useMock": true,
+        "allowMockInProduction": true
+      },
+      "uzcard": {
+        "enabled": true,
+        "port": "COM4",
+        "baudRate": 9600,
+        "useMock": true,
+        "allowMockInProduction": true
+      }
     },
     "printer": {
       "enabled": true,
       "vendorId": "0x1234",
       "productId": "0x5678",
+      "charsPerLine": 48,
       "useMock": true
     }
   },
   "api": {
-    "baseUrl": "https://io.bellissimo.uz/api",
+    "baseUrl": "https://devio.bellissimo.uz/api",
     "timeout": 5000,
-    "retryAttempts": 3
+    "retryAttempts": 1
   }
 }
