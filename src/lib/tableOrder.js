@@ -274,3 +274,21 @@ export function extractOrderNumber(response) {
   if (number != null) return number;
   return data?.iiko ?? null;
 }
+
+/**
+ * Extract the online-payment redirect URL from the POST /table-orders/add
+ * response, if the chosen payment type is settled externally (Payme/Click/Uzum).
+ * Returns null for cash / card-terminal orders that need no redirect.
+ * @param {object} response
+ * @returns {string|null}
+ */
+export function extractPaymentUrl(response) {
+  const order = response?.data?.order;
+  const payments = order?.payments;
+  if (Array.isArray(payments)) {
+    const withUrl = payments.find((p) => p && typeof p.url === 'string' && p.url.trim());
+    if (withUrl) return withUrl.url.trim();
+  }
+  const single = order?.paymentUrl ?? response?.data?.paymentUrl;
+  return typeof single === 'string' && single.trim() ? single.trim() : null;
+}

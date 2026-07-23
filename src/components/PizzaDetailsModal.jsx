@@ -7,6 +7,7 @@ import { pickCrustName } from '../i18n/translate.js';
 import { computePizzaUnitPrice, formatPizzaDetailLine, initPizzaSelections } from '../lib/pizzaPrice.js';
 import { buildPizzaOrderModifiers } from '../lib/tableOrder.js';
 import { useI18n } from '../hooks/useI18n.js';
+import { useOverlayClose } from '../hooks/useOverlayClose.js';
 import { backdropClose } from '../lib/backdropClose.js';
 import { PizzaCustomizeForm } from './PizzaCustomizeForm.jsx';
 
@@ -24,6 +25,7 @@ function IconClose({ className = 'h-8 w-8' }) {
  */
 export function PizzaDetailsModal({ product, template, onClose, onContinue, badgeHit }) {
   const { t, locale } = useI18n();
+  const { closing, close } = useOverlayClose(onClose);
   const [sel, setSel] = useState(() => initPizzaSelections(template));
 
   const resolvedTemplate = useMemo(
@@ -97,18 +99,24 @@ export function PizzaDetailsModal({ product, template, onClose, onContinue, badg
 
   return (
     <div
-      onClick={backdropClose(onClose)}
-      className="fixed inset-0 z-[60] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)]"
+      onClick={backdropClose(close)}
+      className={`fixed inset-0 z-[60] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] ${
+        closing ? 'motion-safe:animate-kiosk-backdrop-out' : 'motion-safe:animate-kiosk-backdrop'
+      }`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="pizza-modal-title"
     >
-      <div className="flex max-h-[min(1200px,92vh)] w-full max-w-kiosk flex-col overflow-hidden rounded-t-[32px] bg-white shadow-dock">
-        <div className="flex max-h-[inherit] min-h-0 flex-col gap-6 overflow-y-auto overflow-x-hidden overscroll-contain px-6 pb-32 pt-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div
+        className={`flex max-h-[min(1200px,92vh)] w-full max-w-kiosk flex-col overflow-hidden rounded-t-[32px] bg-white shadow-dock ${
+          closing ? 'motion-safe:animate-kiosk-sheet-out' : 'motion-safe:animate-kiosk-sheet'
+        }`}
+      >
+        <div className="flex max-h-[inherit] min-h-0 flex-col gap-6 overflow-y-auto overflow-x-hidden overscroll-contain px-6 pb-40 pt-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex w-full justify-end">
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => close()}
               className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition hover:bg-neutral-50"
               aria-label={t('common.close')}
             >

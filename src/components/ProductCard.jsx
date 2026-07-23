@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { formatUzs } from '../lib/formatUzs.js';
 import {
   normalizeProductForMenuCard,
@@ -6,7 +7,8 @@ import {
 } from '../lib/menuProduct.js';
 import { tEntity } from '../lib/tEntity.js';
 import { useI18n } from '../hooks/useI18n.js';
-import { IconMinus, IconPlus } from './icons.jsx';
+import { QuantityStepper } from './QuantityStepper.jsx';
+import { useFlyToCart } from './FlyToCart.jsx';
 
 function resolveDiscount(product) {
   if (product.discountPercent != null) return product.discountPercent;
@@ -18,6 +20,8 @@ function resolveDiscount(product) {
 
 export function ProductCard({ product, qty = 0, onAdd, onComboOpen, onPizzaOpen, onInc, onDec }) {
   const { t, locale } = useI18n();
+  const { flyToCart } = useFlyToCart();
+  const imgRef = useRef(null);
   const hasDiscount = product.oldPrice && product.price < product.oldPrice;
   const discount = resolveDiscount(product);
   const inCart = qty > 0;
@@ -25,10 +29,14 @@ export function ProductCard({ product, qty = 0, onAdd, onComboOpen, onPizzaOpen,
   const localized = { ...product, name: tEntity(product, locale, 'name') };
   const imageSrc = resolveProductImage(product);
 
+  /** Fly the product image into the cart button as feedback for a cart add. */
+  const fly = () => flyToCart(imgRef.current, imageSrc);
+
   return (
     <article className="flex w-[232px] shrink-0 flex-col gap-4">
       <div className="relative h-[184px] w-[232px] overflow-hidden rounded-2xl bg-white">
         <img
+          ref={imgRef}
           src={imageSrc}
           alt=""
           className="h-full w-full object-cover"
@@ -80,32 +88,27 @@ export function ProductCard({ product, qty = 0, onAdd, onComboOpen, onPizzaOpen,
             }
             if (product.kind === 'combo' && onComboOpen) onComboOpen(localized);
             else if (product.kind === 'pizza' && onPizzaOpen) onPizzaOpen(localized);
-            else onAdd(localized);
+            else {
+              fly();
+              onAdd(localized);
+            }
           }}
           className="flex h-10 w-[232px] items-center justify-center rounded-full bg-surface px-2.5 py-1.5 text-[15px] font-semibold leading-5 text-ink transition hover:bg-neutral-200 active:scale-[0.99]"
         >
           {t('common.add')}
         </button>
       ) : (
-        <div className="flex h-11 w-[232px] items-center rounded-full bg-surface">
-          <button
-            type="button"
-            className="flex h-full flex-1 items-center justify-center rounded-l-full transition active:bg-black/5"
-            onClick={() => onDec(product.id)}
-            aria-label={t('common.decrease')}
-          >
-            <IconMinus />
-          </button>
-          <span className="min-w-[3ch] text-center text-[15px] font-semibold leading-5 text-ink">{qty}</span>
-          <button
-            type="button"
-            className="flex h-full flex-1 items-center justify-center rounded-r-full transition active:bg-black/5"
-            onClick={() => onInc(product.id)}
-            aria-label={t('common.increase')}
-          >
-            <IconPlus />
-          </button>
-        </div>
+        <QuantityStepper
+          className="h-11 w-[232px] bg-surface"
+          valueClassName="min-w-[3ch] text-[15px] leading-5"
+          iconClassName="h-6 w-6"
+          value={qty}
+          onDecrement={() => onDec(product.id)}
+          onIncrement={() => {
+            fly();
+            onInc(product.id);
+          }}
+        />
       )}
     </article>
   );

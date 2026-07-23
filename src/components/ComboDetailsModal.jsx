@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { formatUzs } from '../lib/formatUzs.js';
 import { resolveProductImage } from '../lib/menuProduct.js';
 import { tEntity } from '../lib/tEntity.js';
@@ -5,6 +6,8 @@ import { comboOptionLabel, translateFallback } from '../i18n/translate.js';
 import { computeComboDelta, computeComboPizzaExtrasSum, getOptionForSlot } from '../lib/comboPrice.js';
 import { backdropClose } from '../lib/backdropClose.js';
 import { useI18n } from '../hooks/useI18n.js';
+import { useOverlayClose } from '../hooks/useOverlayClose.js';
+import { useFlyToCart } from './FlyToCart.jsx';
 
 function IconClose({ className = 'h-8 w-8' }) {
   return (
@@ -66,7 +69,17 @@ export function ComboDetailsModal({
   onConfirm,
 }) {
   const { t, locale } = useI18n();
+  const { closing, close } = useOverlayClose(onClose);
+  const { flyToCart } = useFlyToCart();
+  const heroImgRef = useRef(null);
   const combo = product?.combo;
+
+  const backdropAnim = closing
+    ? 'motion-safe:animate-kiosk-backdrop-out'
+    : 'motion-safe:animate-kiosk-backdrop';
+  const sheetAnim = closing
+    ? 'motion-safe:animate-kiosk-sheet-out'
+    : 'motion-safe:animate-kiosk-sheet';
 
   if (!product) return null;
   if (!loading && !combo) return null;
@@ -74,18 +87,18 @@ export function ComboDetailsModal({
   if (loading || !combo) {
     return (
       <div
-        onClick={backdropClose(onClose)}
-        className="fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(30,30,30,0.7)] p-0 sm:p-3"
+        onClick={backdropClose(close)}
+        className={`fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(30,30,30,0.7)] p-0 sm:p-3 ${backdropAnim}`}
         role="dialog"
         aria-modal="true"
         aria-busy="true"
         aria-labelledby="combo-modal-title"
       >
-        <div className={sheetClassName}>
+        <div className={`${sheetClassName} ${sheetAnim}`}>
           <div className="flex w-full max-w-[740px] justify-end sm:mx-auto">
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => close()}
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition hover:bg-neutral-50"
               aria-label={t('common.close')}
             >
@@ -113,94 +126,104 @@ export function ComboDetailsModal({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(30,30,30,0.7)] p-0 sm:p-3"
+      onClick={backdropClose(close)}
+      className={`fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(30,30,30,0.7)] p-0 sm:p-3 ${backdropAnim}`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="combo-modal-title"
     >
-      <div className={sheetClassName}>
-        <div className="flex w-full max-w-[740px] justify-end sm:mx-auto">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition hover:bg-neutral-50"
-            aria-label={t('common.close')}
-          >
-            <IconClose className="text-ink" />
-          </button>
-        </div>
-
-        <div className="relative mx-auto aspect-[522/360] w-full max-w-[522px] shrink-0 overflow-hidden rounded-[24px] bg-neutral-100">
-          <img
-            src={combo.heroImage || resolveProductImage(product)}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-            decoding="async"
-          />
-        </div>
-
-        <div className="flex w-full max-w-[740px] flex-col gap-6 sm:mx-auto">
-          <div className="flex flex-col items-center gap-2 px-1 text-center sm:px-2">
-            <h2
-              id="combo-modal-title"
-              className="font-product-700 w-full text-[clamp(1.75rem,4.2vw,2.25rem)] leading-[1.1] tracking-[-0.02em] text-brand-red"
-            >
-              {tEntity(product, locale, 'name')}
-            </h2>
-            {description ? (
-              <p className="font-inter-400 mx-auto max-w-[60ch] text-center text-base leading-5 tracking-[-0.05em] text-ink">
-                {description}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="mx-auto grid w-full max-w-[692px] grid-cols-1 gap-3 min-[560px]:grid-cols-2 min-[560px]:justify-items-center pb-[132px]">
-            {combo.slots.map((slot) => {
-              const optId = selections[slot.id];
-              const opt = getOptionForSlot(combo, slot.id, optId);
-              return (
-                <div
-                  key={slot.id}
-                  className="flex min-h-[144px] w-full max-w-[340px] gap-2 overflow-hidden rounded-[24px] bg-white px-3 py-3 shadow-card min-[560px]:w-full"
-                >
-                  <div className="relative size-[120px] shrink-0 overflow-hidden rounded-2xl mix-blend-darken">
-                    <img
-                      src={opt?.image}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  <div className="flex min-h-[120px] min-w-0 flex-1 flex-col justify-between gap-2 py-0.5">
-                    <p className="line-clamp-3 font-inter-600 text-left text-[18px] leading-6 text-ink">
-                      {comboOptionLabel(locale, opt?.id, opt?.name ?? '')}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => onChangeSlot(slot.id)}
-                      className="self-start rounded-full bg-surface px-4 py-1.5 font-inter-600 text-sm leading-5 text-ink transition hover:bg-neutral-200 active:scale-[0.99]"
-                    >
-                      {t('comboModal.change')}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 z-[1] flex flex-col gap-3 border-t border-black/5 bg-white/95 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 px-5 backdrop-blur-sm supports-[backdrop-filter]:bg-white/90">
-            <p className="font-inter-600 text-center text-[clamp(1.05rem,2.8vw,1.25rem)] leading-7 text-ink">
-              {t('comboModal.total', { amount: formatUzs(totalPrice) })}
-            </p>
+      <div
+        className={`flex max-h-[min(1200px,92svh)] w-full max-w-kiosk flex-col overflow-hidden rounded-t-[32px] bg-white shadow-dock ${sheetAnim}`}
+      >
+        <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto overflow-x-hidden px-4 pb-6 pt-8 min-[400px]:px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex w-full max-w-[740px] justify-end sm:mx-auto">
             <button
               type="button"
-              onClick={onConfirm}
-              className="font-inter-600 w-full rounded-full bg-brand-green py-4 text-[clamp(1rem,2.8vw,1.125rem)] leading-6 text-white shadow-md transition hover:bg-brand-green-dark active:scale-[0.99]"
+              onClick={() => close()}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition hover:bg-neutral-50"
+              aria-label={t('common.close')}
             >
-              {t('comboModal.addToCart')}
+              <IconClose className="text-ink" />
             </button>
           </div>
+
+          <div className="relative mx-auto aspect-[522/360] w-full max-w-[522px] shrink-0 overflow-hidden rounded-[24px] bg-neutral-100">
+            <img
+              ref={heroImgRef}
+              src={combo.heroImage || resolveProductImage(product)}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              decoding="async"
+            />
+          </div>
+
+          <div className="flex w-full max-w-[740px] flex-col gap-6 sm:mx-auto">
+            <div className="flex flex-col items-center gap-2 px-1 text-center sm:px-2">
+              <h2
+                id="combo-modal-title"
+                className="font-product-700 w-full text-[clamp(1.75rem,4.2vw,2.25rem)] leading-[1.1] tracking-[-0.02em] text-brand-red"
+              >
+                {tEntity(product, locale, 'name')}
+              </h2>
+              {description ? (
+                <p className="font-inter-400 mx-auto max-w-[60ch] text-center text-base leading-5 tracking-[-0.05em] text-ink">
+                  {description}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="mx-auto grid w-full max-w-[692px] grid-cols-1 gap-3 min-[560px]:grid-cols-2 min-[560px]:justify-items-center">
+              {combo.slots.map((slot) => {
+                const optId = selections[slot.id];
+                const opt = getOptionForSlot(combo, slot.id, optId);
+                return (
+                  <div
+                    key={slot.id}
+                    className="flex min-h-[144px] w-full max-w-[340px] gap-2 overflow-hidden rounded-[24px] bg-white px-3 py-3 shadow-card min-[560px]:w-full"
+                  >
+                    <div className="relative size-[120px] shrink-0 overflow-hidden rounded-2xl mix-blend-darken">
+                      <img
+                        src={opt?.image}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                    <div className="flex min-h-[120px] min-w-0 flex-1 flex-col justify-between gap-2 py-0.5">
+                      <p className="line-clamp-3 font-inter-600 text-left text-[18px] leading-6 text-ink">
+                        {comboOptionLabel(locale, opt?.id, opt?.name ?? '')}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => onChangeSlot(slot.id)}
+                        className="self-start rounded-full bg-surface px-4 py-1.5 font-inter-600 text-sm leading-5 text-ink transition hover:bg-neutral-200 active:scale-[0.99]"
+                      >
+                        {t('comboModal.change')}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Fixed action bar — sibling of the scroll area so it never scrolls. */}
+        <div className="flex shrink-0 flex-col gap-3 border-t border-black/5 bg-white px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
+          <p className="font-inter-600 text-center text-[clamp(1.05rem,2.8vw,1.25rem)] leading-7 text-ink">
+            {t('comboModal.total', { amount: formatUzs(totalPrice) })}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              flyToCart(heroImgRef.current, combo.heroImage || resolveProductImage(product));
+              close(onConfirm);
+            }}
+            className="font-inter-600 w-full rounded-full bg-brand-green py-4 text-[clamp(1rem,2.8vw,1.125rem)] leading-6 text-white shadow-md transition hover:bg-brand-green-dark active:scale-[0.99]"
+          >
+            {t('comboModal.addToCart')}
+          </button>
         </div>
       </div>
     </div>

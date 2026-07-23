@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '../hooks/useI18n.js';
+import { useOverlayClose } from '../hooks/useOverlayClose.js';
 import { useKioskSettingsStore } from '../store/kioskSettingsStore.js';
 import {
   DEFAULT_KIOSK_CITY_ID,
@@ -14,6 +15,7 @@ import { backdropClose } from '../lib/backdropClose.js';
  */
 export function KioskSettingsModal({ open, onClose }) {
   const { t } = useI18n();
+  const { closing, close } = useOverlayClose(onClose, 200);
   const queryClient = useQueryClient();
   const storedCity = useKioskSettingsStore((s) => s.cityId);
   const storedOrg = useKioskSettingsStore((s) => s.organizationId);
@@ -34,7 +36,7 @@ export function KioskSettingsModal({ open, onClose }) {
   const handleSave = () => {
     setKioskLocation(cityDraft, orgDraft);
     queryClient.invalidateQueries({ queryKey: ['catalog', 'organizations'] });
-    onClose();
+    close();
   };
 
   const handleReset = () => {
@@ -46,13 +48,19 @@ export function KioskSettingsModal({ open, onClose }) {
 
   return (
     <div
-      onClick={backdropClose(onClose)}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 animate-kiosk-backdrop"
+      onClick={backdropClose(() => close())}
+      className={`fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 ${
+        closing ? 'animate-kiosk-backdrop-out' : 'animate-kiosk-backdrop'
+      }`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="kiosk-settings-title"
     >
-      <div className="animate-kiosk-card w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+      <div
+        className={`w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl ${
+          closing ? 'animate-kiosk-pop-out' : 'animate-kiosk-card'
+        }`}
+      >
         <h2 id="kiosk-settings-title" className="font-product text-2xl font-bold text-ink">
           {t('settings.title')}
         </h2>
@@ -93,7 +101,7 @@ export function KioskSettingsModal({ open, onClose }) {
           </button>
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => close()}
             className="min-h-[48px] rounded-full bg-surface px-6 py-3 font-inter text-[16px] font-semibold text-ink transition hover:bg-neutral-200/90"
           >
             {t('settings.cancel')}

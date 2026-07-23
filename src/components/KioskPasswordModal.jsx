@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useState } from 'react';
 import { useI18n } from '../hooks/useI18n.js';
+import { useOverlayClose } from '../hooks/useOverlayClose.js';
 import { KIOSK_SETTINGS_PASSWORD } from '../lib/kioskSettingsAuth.js';
 import { backdropClose } from '../lib/backdropClose.js';
 
@@ -8,6 +9,7 @@ import { backdropClose } from '../lib/backdropClose.js';
  */
 export function KioskPasswordModal({ open, onClose, onSuccess }) {
   const { t } = useI18n();
+  const { closing, close } = useOverlayClose(onClose, 200);
   const formId = useId();
   const [value, setValue] = useState('');
   const [error, setError] = useState(false);
@@ -30,13 +32,19 @@ export function KioskPasswordModal({ open, onClose, onSuccess }) {
 
   return (
     <div
-      onClick={backdropClose(onClose)}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 animate-kiosk-backdrop"
+      onClick={backdropClose(() => close())}
+      className={`fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 ${
+        closing ? 'animate-kiosk-backdrop-out' : 'animate-kiosk-backdrop'
+      }`}
       role="dialog"
       aria-modal="true"
       aria-labelledby={`${formId}-title`}
     >
-      <div className="animate-kiosk-card w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+      <div
+        className={`w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl ${
+          closing ? 'animate-kiosk-pop-out' : 'animate-kiosk-card'
+        }`}
+      >
         <h2 id={`${formId}-title`} className="font-product text-2xl font-bold text-ink">
           {t('settings.passwordTitle')}
         </h2>
@@ -79,7 +87,7 @@ export function KioskPasswordModal({ open, onClose, onSuccess }) {
           </button>
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => close()}
             className="min-h-[48px] rounded-full bg-surface px-6 py-3 font-inter text-[16px] font-semibold text-ink transition hover:bg-neutral-200/90"
           >
             {t('settings.passwordCancel')}

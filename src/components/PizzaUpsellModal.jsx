@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { formatUzs } from "../lib/formatUzs.js";
 import { pickUpsellItem } from "../i18n/translate.js";
 import { useI18n } from "../hooks/useI18n.js";
+import { useOverlayClose } from "../hooks/useOverlayClose.js";
 import { backdropClose } from "../lib/backdropClose.js";
-import { IconMinus, IconPlus } from "./icons.jsx";
+import { IconPlus } from "./icons.jsx";
+import { QuantityStepper } from "./QuantityStepper.jsx";
 
 /** Per-card entrance animation offset so upsell cards cascade in. */
 const UPSELL_CARD_STAGGER_MS = 42;
@@ -40,6 +42,7 @@ function initCounts(items) {
  */
 export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
   const { t, locale } = useI18n();
+  const { closing, close } = useOverlayClose(onClose);
   const [counts, setCounts] = useState(() => ({
     ...initCounts(upsell.sauces),
     ...initCounts(upsell.drinks),
@@ -73,21 +76,27 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
   }
 
   function handleSkip() {
-    onFinish(counts);
+    close(() => onFinish(counts));
   }
 
   return (
     <div
-      onClick={backdropClose(onClose)}
-      className="fixed inset-0 z-[70] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] motion-safe:animate-kiosk-backdrop"
+      onClick={backdropClose(close)}
+      className={`fixed inset-0 z-[70] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] ${
+        closing ? 'motion-safe:animate-kiosk-backdrop-out' : 'motion-safe:animate-kiosk-backdrop'
+      }`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="pizza-upsell-title"
     >
-      <div className="relative flex max-h-[min(900px,88vh)] w-full max-w-kiosk flex-col overflow-hidden rounded-t-[32px] bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.06)] motion-safe:animate-kiosk-sheet">
+      <div
+        className={`relative flex max-h-[min(900px,88vh)] w-full max-w-kiosk flex-col overflow-hidden rounded-t-[32px] bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.06)] ${
+          closing ? 'motion-safe:animate-kiosk-sheet-out' : 'motion-safe:animate-kiosk-sheet'
+        }`}
+      >
         <button
           type="button"
-          onClick={onClose}
+          onClick={() => close()}
           className="absolute right-6 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition hover:bg-neutral-50 active:scale-[0.98] motion-safe:animate-kiosk-content"
           style={{ animationDelay: "120ms" }}
           aria-label={t("common.close")}
@@ -200,30 +209,14 @@ function UpsellCard({
         {formatUzs(item.price)}
       </p>
       {qty > 0 ? (
-        <div className="flex h-11 items-center rounded-full bg-surface-soft">
-          <button
-            type="button"
-            className="flex h-full flex-1 items-center justify-center rounded-l-full transition active:bg-black/5"
-            onClick={() => onBump(-1)}
-            aria-label={t("common.decrease")}
-          >
-            <IconMinus className="h-5 w-5" />
-          </button>
-          <span
-            key={qty}
-            className="motion-safe:animate-kiosk-qty min-w-[2ch] text-center text-[15px] font-semibold tabular-nums"
-          >
-            {qty}
-          </span>
-          <button
-            type="button"
-            className="flex h-full flex-1 items-center justify-center rounded-r-full transition active:bg-black/5"
-            onClick={() => onBump(1)}
-            aria-label={t("common.increase")}
-          >
-            <IconPlus className="h-5 w-5" />
-          </button>
-        </div>
+        <QuantityStepper
+          className="h-11 w-full bg-surface-soft"
+          valueClassName="min-w-[2ch] text-[15px] tabular-nums"
+          animateValue
+          value={qty}
+          onDecrement={() => onBump(-1)}
+          onIncrement={() => onBump(1)}
+        />
       ) : (
         <button
           type="button"

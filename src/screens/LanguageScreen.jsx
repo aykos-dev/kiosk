@@ -4,9 +4,9 @@ import iconDineIn from '../../assets/icons/in-restaurant.svg';
 import iconTakeaway from '../../assets/icons/take-away.svg';
 
 const LANGS = [
-  { id: 'uz', label: "O'zbek", flag: '🇺🇿' },
-  { id: 'ru', label: 'Русский', flag: '🇷🇺' },
-  { id: 'en', label: 'English', flag: '🇬🇧' },
+  { id: 'uz', label: "🇺🇿 O'zbek" },
+  { id: 'ru', label: '🇷🇺 Русский' },
+  { id: 'en', label: '🇬🇧 English' },
 ];
 
 export function LanguageScreen({
@@ -63,9 +63,6 @@ export function LanguageScreen({
                     active ? 'border-brand-green' : 'border-transparent'
                   }`}
                 >
-                  <span className="text-2xl leading-none" aria-hidden>
-                    {l.flag}
-                  </span>
                   <span className="font-inter-600 text-[clamp(16px,3vw,20px)] leading-7 text-ink">
                     {l.label}
                   </span>

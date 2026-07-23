@@ -14,6 +14,7 @@ import {
 import { comboOptionLabel, pickCrustName } from "../i18n/translate.js";
 import { tEntity } from "../lib/tEntity.js";
 import { useI18n } from "../hooks/useI18n.js";
+import { useOverlayClose } from "../hooks/useOverlayClose.js";
 import { backdropClose } from "../lib/backdropClose.js";
 import { PizzaCustomizeForm } from "./PizzaCustomizeForm.jsx";
 
@@ -105,6 +106,7 @@ export function ComboItemChangeModal({
   onConfirm,
 }) {
   const { t, locale } = useI18n();
+  const { closing, close } = useOverlayClose(onClose);
   const [draft, setDraft] = useState(selectedId);
   const [view, setView] = useState("pick");
   const [pizzaSel, setPizzaSel] = useState(null);
@@ -212,10 +214,10 @@ export function ComboItemChangeModal({
         bortName: pickCrustName(locale, sel.bortId, bort?.name),
         sizeLabel: size?.label ?? "",
       });
-      onConfirm(draft, { selections: sel, detailLine });
+      close(() => onConfirm(draft, { selections: sel, detailLine }));
       return;
     }
-    onConfirm(draft);
+    close(() => onConfirm(draft));
   };
 
   if (!slot?.options?.length || !comboProduct || !combo) return null;
@@ -229,12 +231,18 @@ export function ComboItemChangeModal({
 
   return (
     <div
-      onClick={backdropClose(onClose)}
-      className="fixed inset-0 z-[70] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] p-0 sm:p-3"
+      onClick={backdropClose(close)}
+      className={`fixed inset-0 z-[70] flex items-end justify-center overflow-hidden overscroll-none bg-[rgba(30,30,30,0.7)] p-0 sm:p-3 ${
+        closing ? 'motion-safe:animate-kiosk-backdrop-out' : 'motion-safe:animate-kiosk-backdrop'
+      }`}
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative flex max-h-[min(92svh,1433px)] w-full max-w-[740px] flex-col overflow-hidden rounded-t-[32px] bg-white shadow-dock">
+      <div
+        className={`relative flex max-h-[min(92svh,1433px)] w-full max-w-[740px] flex-col overflow-hidden rounded-t-[32px] bg-white shadow-dock ${
+          closing ? 'motion-safe:animate-kiosk-sheet-out' : 'motion-safe:animate-kiosk-sheet'
+        }`}
+      >
         <div className="relative z-[2] flex min-h-0 flex-1 flex-col bg-white">
           <div className="flex w-full max-w-[740px] shrink-0 items-center gap-3 px-4 pt-8 min-[400px]:px-6">
             {view === "customize" ? (
@@ -254,7 +262,7 @@ export function ComboItemChangeModal({
             </h2>
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => close()}
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition hover:bg-neutral-50"
               aria-label={t("common.close")}
             >
@@ -262,9 +270,9 @@ export function ComboItemChangeModal({
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-4 pb-20 pt-6 min-[400px]:px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-4 pb-3 pt-6 min-[400px]:px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {view === "pick" ? (
-              <div className="mx-auto flex w-full max-w-[692px] flex-wrap justify-center gap-4">
+              <div className="mx-auto flex w-full max-w-[692px] flex-wrap justify-center gap-4 pb-16">
                 {sortedOptions.map((opt) => {
                   const selected = draft === opt.id;
                   const label = comboOptionLabel(locale, opt.id, opt.name);

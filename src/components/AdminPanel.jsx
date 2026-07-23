@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../hooks/useI18n.js';
+import { useOverlayClose } from '../hooks/useOverlayClose.js';
 import { formatUzs } from '../lib/formatUzs.js';
 import { backdropClose } from '../lib/backdropClose.js';
 
 export function AdminPanel({ open, onClose }) {
   const { t } = useI18n();
+  const { closing, close } = useOverlayClose(onClose, 200);
   const [orders, setOrders] = useState([]);
   const [syncInfo, setSyncInfo] = useState(null);
 
@@ -19,15 +21,21 @@ export function AdminPanel({ open, onClose }) {
 
   return (
     <div
-      onClick={backdropClose(onClose)}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={backdropClose(() => close())}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 ${
+        closing ? 'animate-kiosk-backdrop-out' : 'animate-kiosk-backdrop'
+      }`}
     >
-      <div className="max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+      <div
+        className={`max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl ${
+          closing ? 'animate-kiosk-pop-out' : 'animate-kiosk-pop'
+        }`}
+      >
         <div className="flex items-center justify-between border-b px-6 py-4">
           <h2 className="text-2xl font-bold text-neutral-900">{t('admin.title')}</h2>
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => close()}
             className="rounded-xl bg-neutral-100 px-4 py-2 font-semibold text-neutral-800"
           >
             {t('admin.close')}

@@ -1,6 +1,7 @@
 import { ComboDetailsModal } from "../components/ComboDetailsModal.jsx";
 import { ComboItemChangeModal } from "../components/ComboItemChangeModal.jsx";
 import { KioskCartBar } from "../components/KioskCartBar.jsx";
+import { FlyToCartProvider } from "../components/FlyToCart.jsx";
 import { KioskHeader } from "../components/KioskHeader.jsx";
 import { CategorySidebar } from "../components/CategorySidebar.jsx";
 import { PizzaDetailsModal } from "../components/PizzaDetailsModal.jsx";
@@ -49,6 +50,7 @@ export function KioskMenuScreen({
   onUpsellFinish,
 }) {
   return (
+    <FlyToCartProvider>
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       <KioskHeader
         onBack={onBack}
@@ -89,13 +91,15 @@ export function KioskMenuScreen({
         </div>
       </div>
 
-      <KioskCartBar
-        cart={cart}
-        total={total}
-        onOpenCart={onOpenCart}
-        onDec={onDec}
-        onInc={onInc}
-      />
+      {cart.length > 0 && (
+        <KioskCartBar
+          cart={cart}
+          total={total}
+          onOpenCart={onOpenCart}
+          onDec={onDec}
+          onInc={onInc}
+        />
+      )}
 
       {comboProduct && (comboDetailsLoading || comboProduct.combo) && (
         <ComboDetailsModal
@@ -142,5 +146,6 @@ export function KioskMenuScreen({
         />
       )}
     </div>
+    </FlyToCartProvider>
   );
 }

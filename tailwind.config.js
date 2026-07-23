@@ -36,13 +36,33 @@ module.exports = {
           '0%': { transform: 'scale(0.92)' },
           '100%': { transform: 'scale(1)' },
         },
+        kioskFadeOut: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+        kioskSheetDown: {
+          '0%': { opacity: '1', transform: 'translateY(0)' },
+          '100%': { opacity: '0', transform: 'translateY(100%)' },
+        },
+        kioskPopIn: {
+          '0%': { opacity: '0', transform: 'scale(0.94)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        kioskPopOut: {
+          '0%': { opacity: '1', transform: 'scale(1)' },
+          '100%': { opacity: '0', transform: 'scale(0.94)' },
+        },
       },
       animation: {
         'kiosk-backdrop': 'kioskFadeIn 0.25s ease-out forwards',
+        'kiosk-backdrop-out': 'kioskFadeOut 0.26s ease-in forwards',
         'kiosk-sheet': 'kioskSheetUp 0.38s cubic-bezier(0.32, 0.72, 0, 1) forwards',
+        'kiosk-sheet-out': 'kioskSheetDown 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards',
         'kiosk-content': 'kioskSheetUpSoft 0.22s ease-out forwards',
         'kiosk-card': 'kioskCardIn 0.35s cubic-bezier(0.32, 0.72, 0, 1) both',
         'kiosk-qty': 'kioskQtyPop 0.18s ease-out',
+        'kiosk-pop': 'kioskPopIn 0.24s ease-out forwards',
+        'kiosk-pop-out': 'kioskPopOut 0.2s ease-in forwards',
       },
       maxWidth: {
         // Kiosk fills the full panel width (portrait). `max-w-kiosk` is kept as

@@ -1,7 +1,8 @@
 import { formatUzs } from '../lib/formatUzs.js';
 import { pickRecommendation } from '../i18n/translate.js';
 import { useI18n } from '../hooks/useI18n.js';
-import { IconArrowLeft, IconMinus, IconPlus } from '../components/icons.jsx';
+import { IconArrowLeft } from '../components/icons.jsx';
+import { QuantityStepper } from '../components/QuantityStepper.jsx';
 
 /**
  * Full cart view (Figma 4287:26292).
@@ -56,7 +57,7 @@ export function CartScreen({
                   <p className="mt-1 line-clamp-3 text-[16px] leading-5 text-ink-muted">{line.detailLine}</p>
                 )}
                 <div className="mt-2">
-                  {line.kind === 'combo' && line.oldPrice ? (
+                  {line.kind === 'combo' && line.oldPrice && line.oldPrice > line.lineTotal ? (
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[18px] font-semibold text-brand-orange">{formatUzs(line.lineTotal)}</span>
                       <span className="relative w-fit text-[15px] text-ink-muted line-through">
@@ -69,25 +70,12 @@ export function CartScreen({
                 </div>
               </div>
               <div className="flex shrink-0 flex-col justify-center pl-2">
-                <div className="flex h-11 w-[132px] items-center rounded-full bg-surface">
-                  <button
-                    type="button"
-                    className="flex h-full flex-1 items-center justify-center rounded-l-full transition active:bg-black/5"
-                    onClick={() => onDec(line.lineId)}
-                    aria-label={t('common.decrease')}
-                  >
-                    <IconMinus className="h-5 w-5" />
-                  </button>
-                  <span className="min-w-[2ch] text-center text-[15px] font-semibold">{line.qty}</span>
-                  <button
-                    type="button"
-                    className="flex h-full flex-1 items-center justify-center rounded-r-full transition active:bg-black/5"
-                    onClick={() => onInc(line.lineId)}
-                    aria-label={t('common.increase')}
-                  >
-                    <IconPlus className="h-5 w-5" />
-                  </button>
-                </div>
+                <QuantityStepper
+                  className="h-11 w-[132px] bg-surface"
+                  value={line.qty}
+                  onDecrement={() => onDec(line.lineId)}
+                  onIncrement={() => onInc(line.lineId)}
+                />
               </div>
             </div>
           </article>
@@ -140,7 +128,7 @@ export function CartScreen({
         </section>
       )}
 
-      <div className="pointer-events-auto fixed bottom-0 left-1/2 z-30 w-full max-w-kiosk -translate-x-1/2 rounded-t-[32px] bg-white p-6 shadow-dock">
+      <div className="pointer-events-auto fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-kiosk rounded-t-[32px] bg-white p-6 shadow-dock motion-safe:animate-kiosk-sheet">
         <button
           type="button"
           disabled={cart.length === 0}

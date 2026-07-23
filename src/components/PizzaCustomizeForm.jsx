@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { formatUzs } from '../lib/formatUzs.js';
 import { pickCrustName, pickToppingName } from '../i18n/translate.js';
 import { countToppingUnits } from '../lib/pizzaPrice.js';
 import { useI18n } from '../hooks/useI18n.js';
-import { IconCheck, IconMinus, IconPlus } from './icons.jsx';
+import { IconCheck, IconPlus } from './icons.jsx';
+import { QuantityStepper } from './QuantityStepper.jsx';
 
 function IconChevronDown({ className = 'h-4 w-4' }) {
   return (
@@ -27,6 +28,10 @@ export function PizzaCustomizeForm({
   const { t, locale } = useI18n();
   const [showAllToppings, setShowAllToppings] = useState(false);
 
+  // Sliding "liquid" indicator behind the active size tab.
+  const tabRefs = useRef({});
+  const [indicator, setIndicator] = useState(null);
+
   useEffect(() => {
     setShowAllToppings(false);
   }, [sel.sizeId]);
@@ -42,6 +47,18 @@ export function PizzaCustomizeForm({
     ((!hideSizePicker && sizes.length > 1) || (!!header && sizes.length >= 1));
 
   const crustTitle = template._source === 'api' ? t('pizza.chooseDough') : t('pizza.chooseCrust');
+
+  // Measure the active tab so the indicator can glide to it (and follow resizes).
+  useLayoutEffect(() => {
+    if (!showSizeSegment) return undefined;
+    const measure = () => {
+      const el = tabRefs.current[sel.sizeId];
+      if (el) setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [sel.sizeId, sizes.length, showSizeSegment, locale]);
 
   function setSize(sizeId) {
     onSelChange((s) => ({ ...s, sizeId }));
@@ -68,18 +85,28 @@ export function PizzaCustomizeForm({
 
   const sizeTabs = (
     <div className="w-full rounded-2xl bg-surface p-1">
-      <div className="flex gap-1">
+      <div className="relative flex gap-1">
+        {indicator && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 rounded-xl bg-white shadow-[0px_2px_4px_rgba(0,0,0,0.05)] transition-[transform,width] duration-[350ms] ease-[cubic-bezier(0.34,1.4,0.64,1)]"
+            style={{ width: `${indicator.width}px`, transform: `translateX(${indicator.left}px)` }}
+          />
+        )}
         {sizes.map((s) => {
           const active = sel.sizeId === s.id;
           return (
             <button
               key={s.id}
+              ref={(el) => {
+                if (el) tabRefs.current[s.id] = el;
+                else delete tabRefs.current[s.id];
+              }}
               type="button"
               onClick={() => setSize(s.id)}
-              className={`flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center rounded-xl px-3 py-3 text-[18px] font-semibold leading-5 transition ${active
-                  ? 'bg-white text-brand-green shadow-[0px_2px_4px_rgba(0,0,0,0.05)]'
-                  : 'text-ink'
-                }`}
+              className={`relative z-10 flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center rounded-xl px-3 py-3 text-[18px] font-semibold leading-5 transition-colors duration-200 ${
+                active ? 'text-brand-green' : 'text-ink'
+              }`}
             >
               {s.label}
             </button>
@@ -90,7 +117,7 @@ export function PizzaCustomizeForm({
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 ">
       {header ? (
         <>
           <div className="relative mx-auto aspect-[522/360] w-full max-w-[522px] overflow-hidden rounded-[24px] bg-neutral-100">
@@ -218,33 +245,26 @@ export function PizzaCustomizeForm({
                     <p className="font-inter-600 truncate font-semibold text-brand-green">{toppingLabel}</p>
                     <p className="font-inter-400 text-ink">+{formatUzs(top.priceDelta)}</p>
                   </div>
-                  <div
-                    className={`flex h-10 w-full items-center rounded-full bg-surface px-3 ${n > 0 ? 'justify-between gap-2' : 'justify-center'
-                      }`}
-                  >
-                    {n > 0 && (
-                      <button
-                        type="button"
-                        className="flex size-6 shrink-0 items-center justify-center rounded-md hover:bg-black/5"
-                        onClick={() => bumpTopping(top.id, -1)}
-                        aria-label={t('common.decrease')}
-                      >
-                        <IconMinus className="h-5 w-5" />
-                      </button>
-                    )}
-                    {n > 0 ? (
-                      <span className="min-w-[1.5ch] flex-1 text-center text-[15px] font-semibold leading-5">{n}</span>
-                    ) : null}
+                  {n > 0 ? (
+                    <QuantityStepper
+                      className="h-10 w-full bg-surface"
+                      valueClassName="min-w-[1.5ch] text-[15px] leading-5"
+                      value={n}
+                      incrementDisabled={toppingCount >= maxT}
+                      onDecrement={() => bumpTopping(top.id, -1)}
+                      onIncrement={() => bumpTopping(top.id, 1)}
+                    />
+                  ) : (
                     <button
                       type="button"
-                      className="flex size-6 shrink-0 items-center justify-center rounded-md hover:bg-black/5 disabled:opacity-40"
+                      className="flex h-10 w-full items-center justify-center rounded-full bg-surface transition hover:bg-neutral-200 disabled:opacity-40"
                       onClick={() => bumpTopping(top.id, 1)}
                       disabled={toppingCount >= maxT}
                       aria-label={t('common.add')}
                     >
                       <IconPlus className="h-5 w-5" />
                     </button>
-                  </div>
+                  )}
                   {selected && (
                     <span className="absolute right-[8.5px] top-[8.5px] flex size-8 items-center justify-center rounded-full bg-brand-green shadow-md">
                       <IconCheck className="h-4 w-4 text-white" />

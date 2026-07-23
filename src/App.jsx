@@ -15,6 +15,7 @@ import { LanguageScreen } from './screens/LanguageScreen.jsx';
 import { OrderConfirm } from './components/OrderConfirm.jsx';
 import { PaymentMethodScreen } from './screens/PaymentMethodScreen.jsx';
 import { PaymentProcessingScreen } from './components/PaymentProcessingScreen.jsx';
+import { OrderPaymentQrScreen } from './components/OrderPaymentQrScreen.jsx';
 import { KioskPasswordModal } from './components/KioskPasswordModal.jsx';
 import { KioskSettingsModal } from './components/KioskSettingsModal.jsx';
 import { WelcomeScreen } from './screens/WelcomeScreen.jsx';
@@ -291,6 +292,15 @@ export default function App() {
 
       {screen === 'payment' && payment.paymentStep === 'processing' && (
         <PaymentProcessingScreen total={total} />
+      )}
+
+      {screen === 'payment' && payment.paymentStep === 'qr' && payment.paymentQr && (
+        <OrderPaymentQrScreen
+          url={payment.paymentQr.url}
+          kind={payment.paymentQr.kind}
+          orderNumber={orderNumber}
+          onHome={resetFlow}
+        />
       )}
 
       {screen === 'success' && orderNumber != null && (

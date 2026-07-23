@@ -7,12 +7,16 @@ import { IconArrowLeft } from '../components/icons.jsx';
 import { getOrganizationsQueryOptions } from '../api/organizations.js';
 import { useKioskSettingsStore } from '../store/kioskSettingsStore.js';
 import { getPaymentTypesForOrganization } from '../lib/organizationPaymentTypes.js';
-import {
-  isQrGroupCode,
-  paymentVisualKind,
-  pickPaymentTypeLabel,
-  QR_GROUP_CODES,
-} from '../lib/paymentTypeVisual.js';
+import { paymentVisualKind, pickPaymentTypeLabel } from '../lib/paymentTypeVisual.js';
+
+/** Fallback display labels when the terminal payment type has no localized label. */
+const KIND_LABEL = {
+  payme: 'Payme',
+  click: 'Click',
+  uzum: 'Uzum',
+  humo: 'Humo / UzCard',
+  cash: 'Naqd',
+};
 
 import bellissimoIcon from '../../assets/images/bellissimo-icon.png';
 import paymeImg from '../../assets/images/payment-types/payme.png';
@@ -56,20 +60,6 @@ export function PaymentMethodScreen({ total, onBack, onSelect, error }) {
     [organizations, organizationId],
   );
 
-  const qrTypes = useMemo(() => {
-    const list = [];
-    for (const code of QR_GROUP_CODES) {
-      const found = paymentTypes.find((p) => (p?.object?.code || '').toUpperCase() === code);
-      if (found) list.push(found);
-    }
-    return list;
-  }, [paymentTypes]);
-
-  const nonQrTypes = useMemo(
-    () => paymentTypes.filter((p) => !isQrGroupCode(p?.object?.code)),
-    [paymentTypes],
-  );
-
   return (
     <div className="relative flex min-h-screen flex-col bg-white font-sans pb-10">
       <header className="flex items-center gap-4 px-6 pt-4">
@@ -101,44 +91,24 @@ export function PaymentMethodScreen({ total, onBack, onSelect, error }) {
         </div>
       )}
 
-      <div className="mx-auto mt-8 flex w-full max-w-[348px] flex-col gap-5 px-6">
-        {qrTypes.length > 0 && (
-          <button
-            type="button"
-            onClick={() => onSelect(qrTypes[0])}
-            className="flex flex-col items-center gap-5 rounded-[24px] bg-surface px-6 py-5 text-center transition hover:bg-neutral-200/80"
-          >
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <span className="font-inter text-[20px] font-medium leading-7 text-brand-orange">{t('payment.qrLine1')}</span>
-              <span className="font-inter text-[20px] font-medium leading-7 text-ink">{t('payment.qrLine2')}</span>
-            </div>
-            <div className="h-px w-full bg-black/10" />
-            <div className="flex flex-wrap items-center justify-center gap-5">
-              {qrTypes.map((pt) => {
-                const code = pt?.object?.code;
-                const kind = paymentVisualKind(code);
-                return <PaymentLogo key={pt.id ?? code} kind={kind} />;
-              })}
-            </div>
-          </button>
-        )}
-
-        {nonQrTypes.map((pt) => {
+      <div className="mx-auto mt-8 flex w-full max-w-[416px] flex-col gap-4 px-6">
+        {paymentTypes.map((pt) => {
           const code = pt?.object?.code;
           const kind = paymentVisualKind(code);
-          const label = pickPaymentTypeLabel(pt, locale);
+          const label = pickPaymentTypeLabel(pt, locale) || KIND_LABEL[kind] || code || '';
           return (
             <button
               key={pt.id ?? code}
               type="button"
               onClick={() => onSelect(pt)}
-              className="flex flex-col items-center gap-5 rounded-[24px] bg-surface px-6 py-5 text-center transition hover:bg-neutral-200/80"
+              className="flex items-center gap-5 rounded-[24px] bg-surface px-6 py-5 text-left transition hover:bg-neutral-200/80 active:scale-[0.99]"
             >
-              <p className="font-inter text-[20px] font-medium leading-7 tracking-[-0.15px] text-ink">{label}</p>
-              <div className="h-px w-full bg-black/10" />
-              <div className="flex min-h-14 items-center justify-center">
+              <div className="flex h-14 shrink-0 items-center justify-center">
                 <PaymentLogo kind={kind} />
               </div>
+              <span className="flex-1 font-inter text-[20px] font-medium leading-7 tracking-[-0.15px] text-ink">
+                {label}
+              </span>
             </button>
           );
         })}

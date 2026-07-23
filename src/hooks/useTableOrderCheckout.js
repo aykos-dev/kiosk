@@ -8,9 +8,11 @@ import {
   buildOrderPayment,
   buildTableOrderPayload,
   extractOrderNumber,
+  extractPaymentUrl,
   generateClientCode,
   resolveKioskOrderTarget,
 } from '../lib/tableOrder.js';
+import { paymentVisualKind } from '../lib/paymentTypeVisual.js';
 
 /**
  * Table-order checkout: from the payment picker, build the POST /table-orders/add
@@ -29,6 +31,8 @@ export function useTableOrderCheckout({
   locale,
 }) {
   const [paymentStep, setPaymentStep] = useState('select');
+  /** { url, kind } for online gateways that return a redirect URL to scan. */
+  const [paymentQr, setPaymentQr] = useState(null);
   const submittingRef = useRef(false);
 
   const cityId = useKioskSettingsStore((s) => s.cityId);
@@ -42,6 +46,7 @@ export function useTableOrderCheckout({
 
   const openPayment = useCallback(() => {
     setLastError(null);
+    setPaymentQr(null);
     setScreen('payment');
     setPaymentStep('select');
   }, [setLastError, setScreen]);
@@ -93,8 +98,16 @@ export function useTableOrderCheckout({
         if (res?.success) {
           setOrderNumber(extractOrderNumber(res));
           clearCart();
-          setScreen('success');
-          setPaymentStep('select');
+          const url = extractPaymentUrl(res);
+          if (url) {
+            // Online gateway (Payme/Click/Uzum): show a QR of the pay URL with
+            // the chosen provider's logo centered; stay on the payment screen.
+            setPaymentQr({ url, kind: paymentVisualKind(paymentType?.object?.code) });
+            setPaymentStep('qr');
+          } else {
+            setScreen('success');
+            setPaymentStep('select');
+          }
         } else {
           const reason =
             localizedMessage(res?.reasonMessage?.description) ||
@@ -127,6 +140,7 @@ export function useTableOrderCheckout({
 
   return {
     paymentStep,
+    paymentQr,
     openPayment,
     onPaymentBack,
     submit,
