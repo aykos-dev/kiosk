@@ -5,14 +5,6 @@ const FlyToCartContext = createContext(null);
 /** Duration of the image's flight into the cart button. */
 const FLIGHT_MS = 720;
 
-function prefersReducedMotion() {
-  return (
-    typeof window !== 'undefined' &&
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-}
-
 /**
  * Provides a "fly to cart" gesture: a clone of the added product's image lifts
  * off from its card, arcs, and shrinks into the registered cart button.
@@ -97,18 +89,23 @@ export function FlyToCartProvider({ children }) {
   const flyToCart = useCallback(
     (originEl, imageSrc) => {
       if (!originEl || !imageSrc || typeof document === 'undefined') return;
-      if (prefersReducedMotion()) return;
+      // The kiosk always plays this gesture; it is deliberately not gated on the
+      // OS `prefers-reduced-motion` setting (a kiosk PC frequently has Windows
+      // "Animation effects" disabled, which would otherwise kill the flight).
 
-      // Freeze the origin rect now — the source (e.g. a modal) may unmount
-      // before the flight begins.
+      // Freeze the origin rect AND the already-resolved image source now — the
+      // source (e.g. a modal) may unmount before the flight begins. Using the
+      // decoded `currentSrc` makes the clone paint instantly (from cache)
+      // instead of flashing blank while a fresh request loads.
       const start = originEl.getBoundingClientRect();
       if (!start.width || !start.height) return;
+      const resolvedSrc = originEl.currentSrc || imageSrc;
 
       // If the cart button already exists, launch immediately. Otherwise this
       // is the first item: wait for the bar to mount and its slide-up to settle
       // so the flight lands on the button rather than a guessed point.
       if (targetRef.current) {
-        runFlight(start, imageSrc);
+        runFlight(start, resolvedSrc);
         return;
       }
       let frames = 0;
@@ -117,12 +114,12 @@ export function FlyToCartProvider({ children }) {
         const el = targetRef.current;
         const top = el ? el.getBoundingClientRect().top : null;
         if (el && top === lastTop) {
-          runFlight(start, imageSrc); // rect stable → entrance finished
+          runFlight(start, resolvedSrc); // rect stable → entrance finished
           return;
         }
         lastTop = top;
         if (++frames > 48) {
-          runFlight(start, imageSrc); // ~800ms cap → fall back
+          runFlight(start, resolvedSrc); // ~800ms cap → fall back
           return;
         }
         requestAnimationFrame(waitForTarget);

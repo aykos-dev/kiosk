@@ -117,6 +117,33 @@ async function createMainWindow() {
     mainWindow.show();
   });
 
+  const willOpenDevTools = !app.isPackaged && appConfig.mode === 'development';
+
+  // The UI's entrance/sheet/card animations are gated behind Tailwind's
+  // `motion-safe:` variant and a matchMedia check in JS, i.e. they only run when
+  // the OS reports `prefers-reduced-motion: no-preference`. A kiosk PC often has
+  // Windows "Animation effects" turned off, which makes Chromium report
+  // `reduce` and silently kills every animation. A kiosk is a dedicated device,
+  // so force `no-preference` at the Chromium level so animations always play,
+  // independent of the host machine's accessibility setting.
+  // (Skipped in dev because it needs the debugger, which conflicts with DevTools.)
+  if (!willOpenDevTools) {
+    const applyMotionEmulation = () => {
+      try {
+        const dbg = mainWindow.webContents.debugger;
+        if (!dbg.isAttached()) dbg.attach('1.3');
+        dbg.sendCommand('Emulation.setEmulatedMedia', {
+          features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
+        });
+      } catch (err) {
+        console.warn('[main-app] could not force prefers-reduced-motion', err?.message || err);
+      }
+    };
+    applyMotionEmulation();
+    // Re-apply after each load so it survives navigations/reloads.
+    mainWindow.webContents.on('did-finish-load', applyMotionEmulation);
+  }
+
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
@@ -125,7 +152,7 @@ async function createMainWindow() {
     );
   }
 
-  if (!app.isPackaged && appConfig.mode === 'development') {
+  if (willOpenDevTools) {
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   }
 }
