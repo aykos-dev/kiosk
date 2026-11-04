@@ -55,7 +55,11 @@ const defaults = {
     },
     printer: {
       enabled: true,
+      // 'usb'     -> direct USB via node-usb (printer must use the WinUSB driver).
+      // 'windows' -> Windows print queue named `printerName` ("Generic / Text Only"
+      //              driver, stock usbprint); write-only, no paper status.
       interface: 'usb',
+      printerName: '',
       // XPrinter USB (ESC/POS). vendorId/productId identify the device on the
       // USB bus; find them with Device Manager / `lsusb` and set per install.
       vendorId: '0x1234',

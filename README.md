@@ -82,7 +82,9 @@ Tap the **invisible top-left corner** five times within two seconds to open the 
 ## Hardware (production)
 
 - **Payment terminal:** configure `hardware.paymentTerminal` (COM port on Windows, baud rate). Implement the vendor protocol in `electron/hardware/WindowsSerialPaymentTerminal.js` (currently throws until completed).
-- **Thermal printer:** configure USB identifiers; implement ESC/POS in `electron/hardware/ThermalReceiptPrinter.js` (placeholder until completed).
+- **Thermal printer:** two transports, chosen by `hardware.printer.interface`:
+  - `usb` (default) — direct USB via `electron/hardware/ThermalReceiptPrinter.js`. Set `vendorId`/`productId`; on Windows the printer must use the WinUSB driver (Zadig).
+  - `windows` — Windows print queue via `electron/hardware/WindowsSpoolerReceiptPrinter.js`. Keep the stock driver, add a queue with the **Generic / Text Only** driver on the printer's `USBxxx` port, and set `printerName` to the queue name. Write-only: no paper-out/cover status.
 
 ## Security notes
 
