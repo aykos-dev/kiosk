@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Banknote, CreditCard } from 'lucide-react';
+import { Banknote, CreditCard, Printer } from 'lucide-react';
 import { formatUzs } from '../lib/formatUzs.js';
 import { useI18n } from '../hooks/useI18n.js';
 import { IconArrowLeft } from '../components/icons.jsx';
@@ -53,7 +53,7 @@ function PaymentLogo({ kind, className = '' }) {
 /**
  * Payment method selection (Figma 4287:26388). Payment types come from the default org via organizations API.
  */
-export function PaymentMethodScreen({ total, onBack, onSelect, error }) {
+export function PaymentMethodScreen({ total, onBack, onSelect, error, showTestPayment = false }) {
   const { t, locale } = useI18n();
   const cityId = useKioskSettingsStore((s) => s.cityId);
   const organizationId = useKioskSettingsStore((s) => s.organizationId);
@@ -153,6 +153,22 @@ export function PaymentMethodScreen({ total, onBack, onSelect, error }) {
             </span>
           </button>
         ))}
+
+        {/* Dev-only (config kiosk.testPayment): prints the receipt, no charge, no backend order. */}
+        {showTestPayment && (
+          <button
+            type="button"
+            onClick={() => onSelect({ test: true })}
+            className="flex items-center gap-5 rounded-[24px] border-2 border-dashed border-amber-400 bg-amber-50 px-6 py-5 text-left transition hover:bg-amber-100 active:scale-[0.99]"
+          >
+            <div className="flex h-14 shrink-0 items-center justify-center">
+              <Printer className="h-14 w-14 shrink-0 text-amber-600" strokeWidth={1.5} aria-hidden />
+            </div>
+            <span className="flex-1 font-inter text-[20px] font-medium leading-7 tracking-[-0.15px] text-ink">
+              {t('payment.test')}
+            </span>
+          </button>
+        )}
       </div>
 
       <div className="mx-auto mt-auto w-full max-w-[416px] px-6 pt-10 text-center">

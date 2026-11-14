@@ -114,6 +114,7 @@ export function useComboPizzaFlow({
           unitPrice: pizzaDraft.unitPrice,
           pizzaConfig: pizzaDraft.selections,
           detailLine: pizzaDraft.detailLine,
+          receiptDetails: pizzaDraft.receiptDetails,
           orderProductId: pizzaDraft.orderProductId,
           orderBasePrice: pizzaDraft.orderBasePrice,
           orderModifiers: pizzaDraft.orderModifiers,

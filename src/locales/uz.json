@@ -81,6 +81,7 @@
     "qrLine2": "QR orqali onlayn to'lov",
     "humo": "Humo",
     "uzcard": "Uzcard",
+    "test": "Test (faqat chop etish, to'lovsiz)",
     "amountLabel": "To'lov uchun"
   },
   "paymentQr": {

@@ -3,6 +3,7 @@ import { formatUzs } from "../lib/formatUzs.js";
 import { pickUpsellItem } from "../i18n/translate.js";
 import { useI18n } from "../hooks/useI18n.js";
 import { useOverlayClose } from "../hooks/useOverlayClose.js";
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock.js";
 import { backdropClose } from "../lib/backdropClose.js";
 import { IconPlus } from "./icons.jsx";
 import { QuantityStepper } from "./QuantityStepper.jsx";
@@ -55,18 +56,7 @@ export function PizzaUpsellModal({ upsell, onClose, onFinish }) {
     });
   }, [upsell]);
 
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const prevHtml = html.style.overflow;
-    const prevBody = body.style.overflow;
-    html.style.overflow = "hidden";
-    body.style.overflow = "hidden";
-    return () => {
-      html.style.overflow = prevHtml;
-      body.style.overflow = prevBody;
-    };
-  }, []);
+  useBodyScrollLock();
 
   function bump(id, delta) {
     setCounts((c) => {

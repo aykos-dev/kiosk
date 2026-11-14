@@ -81,6 +81,7 @@
     "qrLine2": "Online payment via QR",
     "humo": "Humo",
     "uzcard": "Uzcard",
+    "test": "Test (print only, not paid)",
     "amountLabel": "Amount due"
   },
   "paymentQr": {

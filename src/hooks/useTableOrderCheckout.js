@@ -13,6 +13,12 @@ import {
   resolveKioskOrderTarget,
 } from '../lib/tableOrder.js';
 import { paymentVisualKind } from '../lib/paymentTypeVisual.js';
+import { cartToReceiptItems } from '../lib/receiptItems.js';
+
+/** Local order number for test-payment receipts (never sent to the backend). */
+function testOrderNumber() {
+  return `T-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
+}
 
 /**
  * Table-order checkout: from the payment picker, build the POST /table-orders/add
@@ -82,6 +88,34 @@ export function useTableOrderCheckout({
       const cardKind = paymentType?.static ? paymentType.cardKind : null;
 
       try {
+        // Test payment: no card terminal, no backend order — just print the
+        // receipt (marked NOT PAID) so the printer layout can be checked.
+        if (paymentType?.test) {
+          const orderNo = testOrderNumber();
+          if (!kiosk?.printReceipt) {
+            setLastError(t('errors.kioskBridge') || t('errors.generic'));
+            setPaymentStep('select');
+            return;
+          }
+          const printed = await kiosk.printReceipt({
+            orderNumber: orderNo,
+            items: cartToReceiptItems(cart),
+            total,
+            paymentMethod: 'test',
+            testMode: true,
+          });
+          if (!printed?.ok) {
+            setLastError(printed?.message || t('errors.generic'));
+            setPaymentStep('select');
+            return;
+          }
+          setOrderNumber(orderNo);
+          clearCart();
+          setScreen('success');
+          setPaymentStep('select');
+          return;
+        }
+
         // Card (Humo/Uzcard): charge the matching physical terminal FIRST, so we
         // only ever register a paid order. No money moves until the terminal
         // approves; a decline/error returns the guest to the picker.
@@ -136,12 +170,7 @@ export function useTableOrderCheckout({
             kiosk
               .printReceipt({
                 orderNumber: orderNo,
-                items: cart.map((i) => ({
-                  name: i.name,
-                  qty: i.qty || 1,
-                  price: i.price,
-                  lineTotal: i.lineTotal ?? (i.price || 0) * (i.qty || 1),
-                })),
+                items: cartToReceiptItems(cart),
                 total,
                 transactionId: cardTxn,
                 paymentMethod: cardKind || paymentVisualKind(paymentType?.object?.code),
@@ -167,12 +196,7 @@ export function useTableOrderCheckout({
             kiosk
               .printReceipt({
                 orderNumber: '—',
-                items: cart.map((i) => ({
-                  name: i.name,
-                  qty: i.qty || 1,
-                  price: i.price,
-                  lineTotal: i.lineTotal ?? (i.price || 0) * (i.qty || 1),
-                })),
+                items: cartToReceiptItems(cart),
                 total,
                 transactionId: cardTxn,
                 paymentMethod: cardKind,

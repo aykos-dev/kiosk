@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { computeComboDelta, computeComboPizzaExtrasSum } from '../lib/comboPrice.js';
+import { comboReceiptDetails } from '../lib/receiptItems.js';
 
 /** Hidden-corner taps must land within this window to count toward the admin gesture. */
 const ADMIN_CORNER_TAP_WINDOW_MS = 2000;
@@ -118,6 +119,8 @@ export const useOrderStore = create((set, get) => ({
         comboPizzaBySlot,
         oldPrice: product.oldPrice,
         detailLine: product.combo?.description,
+        // Chosen component per slot, resolved now while product.combo is at hand.
+        receiptDetails: comboReceiptDetails(product.combo, comboSelections, comboPizzaBySlot, locale),
       };
       // Append as a distinct line — two differently-configured copies of the
       // same combo must coexist. (An exact-match duplicate is merged above.)
@@ -127,7 +130,7 @@ export const useOrderStore = create((set, get) => ({
 
   addPizzaItem: (
     product,
-    { unitPrice, pizzaConfig, detailLine, orderProductId, orderBasePrice, orderModifiers },
+    { unitPrice, pizzaConfig, detailLine, receiptDetails, orderProductId, orderBasePrice, orderModifiers },
   ) => {
     set((state) => {
       const row = {
@@ -142,6 +145,7 @@ export const useOrderStore = create((set, get) => ({
         kind: 'pizza',
         pizzaConfig,
         detailLine,
+        receiptDetails: Array.isArray(receiptDetails) ? receiptDetails : [],
         // iiko order data captured at add-time (base dish + modifier groups).
         orderProductId: orderProductId ?? product.productId ?? product.id,
         orderBasePrice: orderBasePrice ?? unitPrice,

@@ -13,8 +13,10 @@ import {
 } from "../lib/pizzaPrice.js";
 import { comboOptionLabel, pickCrustName } from "../i18n/translate.js";
 import { tEntity } from "../lib/tEntity.js";
+import { pizzaToppingDetails } from "../lib/receiptItems.js";
 import { useI18n } from "../hooks/useI18n.js";
 import { useOverlayClose } from "../hooks/useOverlayClose.js";
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock.js";
 import { backdropClose } from "../lib/backdropClose.js";
 import { PizzaCustomizeForm } from "./PizzaCustomizeForm.jsx";
 
@@ -120,18 +122,7 @@ export function ComboItemChangeModal({
     setPizzaSel(null);
   }, [selectedId, slot?.id]);
 
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const prevHtml = html.style.overflow;
-    const prevBody = body.style.overflow;
-    html.style.overflow = "hidden";
-    body.style.overflow = "hidden";
-    return () => {
-      html.style.overflow = prevHtml;
-      body.style.overflow = prevBody;
-    };
-  }, []);
+  useBodyScrollLock();
 
   const selectedOpt = slot?.options?.find((o) => o.id === draft);
   const isPizza = selectedOpt && isComboPizzaOption(selectedOpt, slot);
@@ -214,7 +205,8 @@ export function ComboItemChangeModal({
         bortName: pickCrustName(locale, sel.bortId, bort?.name),
         sizeLabel: size?.label ?? "",
       });
-      close(() => onConfirm(draft, { selections: sel, detailLine }));
+      const toppingLines = pizzaToppingDetails(template, sel, locale);
+      close(() => onConfirm(draft, { selections: sel, detailLine, toppingLines }));
       return;
     }
     close(() => onConfirm(draft));

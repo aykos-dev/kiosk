@@ -391,6 +391,7 @@ function setupIpc() {
         transactionId: data.transactionId,
         timestamp: data.timestamp || new Date().toISOString(),
         paymentMethod: data.paymentMethod,
+        testMode: data.testMode === true,
       });
       return { ok: true };
     } catch (err) {

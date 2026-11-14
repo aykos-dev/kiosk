@@ -6,8 +6,10 @@ import { tEntity } from '../lib/tEntity.js';
 import { pickCrustName } from '../i18n/translate.js';
 import { computePizzaUnitPrice, formatPizzaDetailLine, initPizzaSelections } from '../lib/pizzaPrice.js';
 import { buildPizzaOrderModifiers } from '../lib/tableOrder.js';
+import { pizzaReceiptDetails, pizzaToppingDetails } from '../lib/receiptItems.js';
 import { useI18n } from '../hooks/useI18n.js';
 import { useOverlayClose } from '../hooks/useOverlayClose.js';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock.js';
 import { backdropClose } from '../lib/backdropClose.js';
 import { PizzaCustomizeForm } from './PizzaCustomizeForm.jsx';
 
@@ -48,18 +50,7 @@ export function PizzaDetailsModal({ product, template, onClose, onContinue, badg
     setSel(initPizzaSelections(mergeApiTemplateForSize(template, sel.sizeId, locale)));
   }, [sel.sizeId, template, locale]);
 
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const prevHtml = html.style.overflow;
-    const prevBody = body.style.overflow;
-    html.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
-    return () => {
-      html.style.overflow = prevHtml;
-      body.style.overflow = prevBody;
-    };
-  }, []);
+  useBodyScrollLock();
 
   const unitPrice = useMemo(
     () => computePizzaUnitPrice(resolvedTemplate, basePrice, sel),
@@ -89,6 +80,7 @@ export function PizzaDetailsModal({ product, template, onClose, onContinue, badg
       selections: sel,
       unitPrice,
       detailLine,
+      receiptDetails: pizzaReceiptDetails(detailLine, pizzaToppingDetails(resolvedTemplate, sel, locale)),
       lineProduct,
       // iiko order data derived from the raw dish (carries modifier group ids).
       orderProductId: lineProduct.productId ?? lineProduct.id,

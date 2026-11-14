@@ -12,6 +12,10 @@ const defaults = {
     windowHeight: 1920,
     minWindowWidth: 518,
     minWindowHeight: 900,
+    // Shows a "Test" payment button that skips the card terminal and the
+    // backend: it only prints a receipt marked NOT PAID. For printer/receipt
+    // layout testing — never enable on a live kiosk.
+    testPayment: false,
   },
   hardware: {
     // Two physical card terminals, one per card scheme, each cabled to the

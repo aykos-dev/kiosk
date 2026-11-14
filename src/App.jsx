@@ -69,6 +69,7 @@ export default function App() {
   const [kioskPasswordOpen, setKioskPasswordOpen] = useState(false);
   const [kioskSettingsOpen, setKioskSettingsOpen] = useState(false);
   const [idleMs, setIdleMs] = useState(DEFAULT_IDLE_SESSION_MS);
+  const [testPaymentEnabled, setTestPaymentEnabled] = useState(false);
 
   useEffect(() => {
     const kiosk = typeof window !== 'undefined' ? window.kiosk : undefined;
@@ -78,6 +79,7 @@ export default function App() {
       if (cancelled) return;
       const ms = cfg?.kiosk?.inactivityTimeout;
       if (typeof ms === 'number' && ms > 0) setIdleMs(ms);
+      setTestPaymentEnabled(cfg?.kiosk?.testPayment === true);
     }).catch(() => {});
     return () => {
       cancelled = true;
@@ -288,6 +290,7 @@ export default function App() {
           onBack={payment.onPaymentBack}
           onSelect={payment.submit}
           error={lastError}
+          showTestPayment={testPaymentEnabled}
         />
       )}
 
